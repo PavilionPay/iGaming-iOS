@@ -15,6 +15,7 @@
 		D11B7B9F2B07FA91009070FB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9B2B07FA91009070FB /* Extensions.swift */; };
 		D11B7BA02B07FA91009070FB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9C2B07FA91009070FB /* ViewController.swift */; };
 		D11B7BA12B07FA91009070FB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9D2B07FA91009070FB /* Models.swift */; };
+		D16B59942B191582000B2F92 /* UserValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16B59932B191582000B2F92 /* UserValues.swift */; };
 		D188D3932B0D539E0076BE12 /* iGamingKit in Frameworks */ = {isa = PBXBuildFile; productRef = D188D3922B0D539E0076BE12 /* iGamingKit */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,8 @@
 		D11B7B9B2B07FA91009070FB /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D11B7B9C2B07FA91009070FB /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D11B7B9D2B07FA91009070FB /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		D16B59922B190E37000B2F92 /* iGamingDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iGamingDemo.entitlements; sourceTree = "<group>"; };
+		D16B59932B191582000B2F92 /* UserValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserValues.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,8 +64,10 @@
 		D11B7B8B2B07F51A009070FB /* iGamingDemo */ = {
 			isa = PBXGroup;
 			children = (
+				D16B59922B190E37000B2F92 /* iGamingDemo.entitlements */,
 				D11B7B8E2B07F51A009070FB /* ContentView.swift */,
 				D11B7B9C2B07FA91009070FB /* ViewController.swift */,
+				D16B59932B191582000B2F92 /* UserValues.swift */,
 				D11B7B9A2B07FA91009070FB /* OperatorServer.swift */,
 				D11B7B9D2B07FA91009070FB /* Models.swift */,
 				D11B7B9B2B07FA91009070FB /* Extensions.swift */,
@@ -160,6 +165,7 @@
 				D11B7BA02B07FA91009070FB /* ViewController.swift in Sources */,
 				D11B7B8F2B07F51A009070FB /* ContentView.swift in Sources */,
 				D11B7B9E2B07FA91009070FB /* OperatorServer.swift in Sources */,
+				D16B59942B191582000B2F92 /* UserValues.swift in Sources */,
 				D11B7BA12B07FA91009070FB /* Models.swift in Sources */,
 				D11B7B8D2B07F51A009070FB /* iGamingDemoApp.swift in Sources */,
 				D11B7B9F2B07FA91009070FB /* Extensions.swift in Sources */,
@@ -292,12 +298,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iGamingDemo/iGamingDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iGamingDemo/Preview Content\"";
 				DEVELOPMENT_TEAM = BW4X72F22B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "ID Verification";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -321,12 +329,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iGamingDemo/iGamingDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iGamingDemo/Preview Content\"";
 				DEVELOPMENT_TEAM = BW4X72F22B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "ID Verification";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

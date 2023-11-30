@@ -9,24 +9,8 @@ import UIKit
 import WebKit
 import LinkKit
 
-
-public struct PavilionWebViewConfiguration {
-    public let url: URL
-    public let linkPresentationMethod: PresentationMethod?
-    public let linkSuccess: LinkKit.OnSuccessHandler?
-    public let linkEvent: LinkKit.OnEventHandler?
-    public let linkExit: LinkKit.OnExitHandler?
-    public let pavilionWebViewDidComplete: ((PavilionWebViewController) -> Void)?
-    
-    public init(url: URL, linkPresentationMethod: PresentationMethod? = nil, linkSuccess: LinkKit.OnSuccessHandler? = nil, linkEvent: LinkKit.OnEventHandler? = nil, linkExit: LinkKit.OnExitHandler? = nil, pavilionWebViewDidComplete: ( (PavilionWebViewController) -> Void)? = nil) {
-        self.url = url
-        self.linkPresentationMethod = linkPresentationMethod
-        self.linkSuccess = linkSuccess
-        self.linkEvent = linkEvent
-        self.linkExit = linkExit
-        self.pavilionWebViewDidComplete = pavilionWebViewDidComplete
-    }
-}
+// PavilionWebViewController class
+// This class is a UIViewController that manages a WKWebView. It implements the WKScriptMessageHandlerWithReply protocol to handle messages from the web content.
 
 public final class PavilionWebViewController: UIViewController, WKScriptMessageHandlerWithReply {
     
@@ -44,11 +28,26 @@ public final class PavilionWebViewController: UIViewController, WKScriptMessageH
         setupWebView()
     }
     
+    
+    /// Loads the Pavilion SDK with the given configuration.
+    ///
+    /// This method sets the configuration for the Pavilion web view and loads the URL from the configuration into the web view.
+    ///
+    /// - Parameter configuration: The configuration for the Pavilion web view. This includes the URL to load in the web view.
+    ///
+    /// # Example
+    /// ```
+    /// let url = URL(string: "https://www.example.com")!
+    /// let configuration = PavilionWebViewConfiguration(url: url)
+    /// loadPavilionSDK(with: configuration)
+    /// ```
     public func loadPavilionSDK(with configuration: PavilionWebViewConfiguration) {
         self.configuration = configuration
         webView.load(URLRequest(url: configuration.url))
     }
     
+    
+    /// Handles script messages received from the web content.
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, replyHandler: @escaping (Any?, String?) -> Void) {
         if let token = message.linkToken {
             linkToken = token
@@ -65,6 +64,7 @@ public final class PavilionWebViewController: UIViewController, WKScriptMessageH
         replyHandler(nil, nil)
     }
     
+    /// Sets up the web view with the appropriate configuration.
     private func setupWebView() {
         let prefs = WKWebpagePreferences()
         prefs.allowsContentJavaScript = true
@@ -86,9 +86,11 @@ public final class PavilionWebViewController: UIViewController, WKScriptMessageH
         webView = WKWebView(frame: .zero, configuration: config)
         webView.allowsBackForwardNavigationGestures = false
         webView.scrollView.bounces = false
+        #if DEBUG
         if #available(iOS 16.4, *) {
             webView.isInspectable = true
         }
+        #endif
         webView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(webView)
         NSLayoutConstraint.activate([
@@ -105,6 +107,7 @@ public final class PavilionWebViewController: UIViewController, WKScriptMessageH
         controller.removeScriptMessageHandler(forName: "NativeBridge", contentWorld: .page)
     }
     
+    /// Opens a link using the Plaid SDK.
     private func openLink() {
         let configuration = createLinkTokenConfiguration()
         
@@ -122,6 +125,7 @@ public final class PavilionWebViewController: UIViewController, WKScriptMessageH
         }
     }
     
+    /// Creates a LinkTokenConfiguration for the Plaid SDK.
     private func createLinkTokenConfiguration() -> LinkTokenConfiguration {
         var linkConfiguration = LinkTokenConfiguration(token: linkToken) { [weak self] success in
             guard let self = self else { return }
@@ -147,6 +151,8 @@ public final class PavilionWebViewController: UIViewController, WKScriptMessageH
 
 
 extension PavilionWebViewController {
+    
+    /// Returns a JavaScript string that adds a message event listener to the window.
     private var nativeBridgeJS: String {
         """
         window.addEventListener("message", function(e) {
@@ -155,6 +161,7 @@ extension PavilionWebViewController {
         """
     }
     
+    /// Closes the web view using the configured handler or a default implementation
     private func closeWebView() {
         if let dismissHandler = configuration.pavilionWebViewDidComplete {
             dismissHandler(self)
@@ -169,14 +176,3 @@ extension PavilionWebViewController {
 }
 
 
-extension WKScriptMessage {
-    var linkToken: String? {
-        guard name == "NativeBridge" else { return nil }
-        return (body as? [String : String])?["linkToken"]
-    }
-    
-    var isCloseMessage: Bool {
-        guard name == "NativeBridge" else { return false }
-        return (body as? String) == "close"
-    }
-}

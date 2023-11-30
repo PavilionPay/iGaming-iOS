@@ -9,28 +9,32 @@ import Foundation
 import CryptoKit
 
 
-#warning("Replace values below with your own")
-fileprivate let secret = <#YOUR_SDK_SECRET_HERE#>
-fileprivate let issuer = <#PAVILION_ISSUER_HERE#>
-fileprivate let audience = <#PAVILION_AUDIENCE_HERE#>
-fileprivate let sdkBaseUrl = <#PAVILION_SDK_BASE_URL_HERE#>
-fileprivate let redirectUrl = <#YOUR_REDIRECT_URL_HERE#>
-
-
-// MARK: - Operator Server
+/// Operator Server
+///
+/// This class is responsible for initializing a patron session and generating patron data.
+///
+/// - Note: You can provide the values above to generate a token locally, or provide a token from another source, such as an SDK backend here.
+///
+/// - Warning: Do not generate tokens locally in a production application. This can expose sensitive information and lead to security vulnerabilities. Always use a secure server-side process to generate tokens.
 class OperatorServer {
     
-    // You can provide the values above to generate a token locally,
-    // or provide a token from another source, such as an SDK backend here
+    /// A closure that returns an external token.
     static var getExternalToken: (() -> String)? = nil
         
-    //
+    /// Initializes a patron session for a given patron type, transaction type, and transaction amount.
+    ///
+    /// - Parameters:
+    ///   - patronType: The type of the patron. This can be "new" or "existing".
+    ///   - transactionType: The type of the transaction. This can be "deposit" or "withdraw".
+    ///   - transactionAmount: The amount of the transaction.
+    ///
+    /// - Returns: A URL for the patron session, or `nil` if an error occurs.
     static func initializePatronSession(forPatronType patronType: String, transactionType: String, transactionAmount: String) async -> URL? {
         let patronData = patronType == "new"
         ? OperatorServer.newPatronTransactionData(withAmount: transactionAmount)
         : OperatorServer.patronTransactionData(withAmount: transactionAmount, type: transactionType)
         
-        let url = URL(string: "\(sdkBaseUrl)/api/patronsession/\(patronType)")!
+        let url = URL(string: "\(UserValues.sdkBaseUri)/api/patronsession/\(patronType)")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = patronData
@@ -47,7 +51,7 @@ class OperatorServer {
             data.printJson()
             let patron = try JSONDecoder().decode(PatronResponse.self, from: data)
             print(response)
-            let url = URL(string: "\(sdkBaseUrl)?mode=\(transactionType)&native=true&redirectUrl=\(redirectUrl)#\(patron.sessionId)")
+            let url = URL(string: "\(UserValues.sdkBaseUri)?mode=\(transactionType)&native=true&redirectUrl=\(UserValues.redirectUri)#\(patron.sessionId)")
             return url
         } catch {
             print(error)
@@ -58,9 +62,17 @@ class OperatorServer {
     
 }
 
-// MARK: - Example Patron Data
+
+/// Example Patron Data
+///
+/// This extension provides methods for generating patron data.
 extension OperatorServer {
     
+    /// Generates data for a new patron transaction.
+    ///
+    /// - Parameter amount: The amount of the transaction.
+    ///
+    /// - Returns: A `Data` object containing the encoded patron data.
     static func newPatronTransactionData(withAmount amount: String) -> Data {
         try! JSONEncoder().encode(
             NewUserSessionRequest(
@@ -85,12 +97,19 @@ extension OperatorServer {
                 remainingDailyDeposit: "1000",
                 transactionId: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),
                 transactionAmount: Double(amount)!,
-                returnURL: redirectUrl,
+                returnURL: UserValues.redirectUri,
                 productType: "preferred"
             )
         )
     }
     
+    /// Generates data for an existing patron transaction.
+    ///
+    /// - Parameters:
+    ///   - amount: The amount of the transaction.
+    ///   - type: The type of the transaction.
+    ///
+    /// - Returns: A `Data` object containing the encoded patron data.
     static func patronTransactionData(withAmount amount: String, type: String) -> Data {
         try! JSONEncoder().encode(
             ExistingUserSessionRequest(
@@ -102,7 +121,7 @@ extension OperatorServer {
                 transactionID: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),
                 transactionAmount: Double(amount)!,
                 transactionType: type == "deposit" ? 0 : 1,
-                returnURL: redirectUrl,
+                returnURL: UserValues.redirectUri,
                 productType: "preferred"
             )
         )
@@ -110,7 +129,9 @@ extension OperatorServer {
 }
 
 
-// MARK: - Token Generator
+/// Token Generator
+///
+/// This enum provides a method for generating a JWT token.
 fileprivate enum TokenGenerator {
     struct Header: Encodable {
         let typ = "JWT"
@@ -121,16 +142,18 @@ fileprivate enum TokenGenerator {
         var nbf: Int
         var exp: Int
         var iat: Int
-        var iss = issuer
-        var aud = audience
+        var iss = UserValues.issuer
+        var aud = UserValues.audience
     }
     
-    
+    /// Generates a JWT token.
+    ///
+    /// - Returns: A JWT token, or `nil` if an error occurs.
     static func generate() -> String? {
         let now = Int(Date.now.timeIntervalSince1970)
         let payload = Payload(nbf: now - 300, exp: now + 1200, iat: now)
         
-        let decoded = Data(base64Encoded: Data(secret.utf8))!
+        let decoded = Data(base64Encoded: Data(UserValues.secret.utf8))!
         let privateKey = SymmetricKey(data: decoded)
         
         let headerJSONData = try! JSONEncoder().encode(Header())

@@ -10,9 +10,21 @@ import iGamingKit
 import LinkKit // optional; required for presentation configuration
 
 
+/// Demonstrates how to integrate and use the iGaming SDK.
 class ViewController: UIViewController {
     
-    
+    /// This method is triggered when the open button is pressed.
+    ///
+    /// To launch an iGaming session:
+    /// 1. Create an instance of `PavilionWebViewController` and presents it.
+    /// 2. Acquire an iGaming token securely from a backend service.
+    ///  - Note: The token step is mocked here by calling the `initializePatronSession(forPatronType:transactionType:transactionAmount:)` method on `OperatorServer`, a mock service that generates or accepts a token and initializes an iGaming session using the provided patron and transaction information.
+    /// 3. Configure a `PavilionWebViewConfiguration` object using the returned URL.
+    /// 4. Load the iGaming SDK with Pavilion and Plaid configuration options by calling the `loadPavilionSDK(with:)` method on the `PavilionWebViewController` instance.
+    ///
+    /// If the `initializePatronSession(forPatronType:transactionType:transactionAmount:)` method returns `nil`, the method will trigger a fatal error, indicating that the Pavilion SDK could not be initialized.
+    ///
+    /// - Note: The `createPavilionConfiguration(with:)` method can be used to create a full configuration for the `PavilionWebViewController`, but in this case, a simple configuration is created using only the returned URL.
     @objc private func openButtonPressed() {
         let vc = PavilionWebViewController()
         pavilionViewController = vc
@@ -50,7 +62,17 @@ class ViewController: UIViewController {
         
     }
     
-    // Example of full configuration
+    /// This method creates a full configuration for a `PavilionWebViewController` instance.
+    ///
+    /// It takes a URL as input and returns a `PavilionWebViewConfiguration` object.
+    ///
+    /// The configuration includes:
+    /// - The URL for the iGaming session.
+    /// - A custom presentation method for the `PavilionWebViewController`. This method pushes the controller onto the navigation stack with a system background color, and pops it when it's done.
+    /// - Handlers for the LinkKit success, event, and exit callbacks. These handlers simply print the relevant information to the console.
+    /// - A completion handler for when the `PavilionWebViewController` finishes its work. This handler pops the controller from the navigation stack.
+    ///
+    /// This method demonstrates how to create a full configuration for the `PavilionWebViewController`, including how to handle various events and callbacks.
     private func createPavilionConfiguration(with url: URL) -> PavilionWebViewConfiguration {
         let nav = navigationController
         
