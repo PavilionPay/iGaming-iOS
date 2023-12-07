@@ -101,6 +101,7 @@
 				D11B7B852B07F51A009070FB /* Sources */,
 				D11B7B862B07F51A009070FB /* Frameworks */,
 				D11B7B872B07F51A009070FB /* Resources */,
+				D13D2F422B22391500085A8B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -162,6 +163,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D13D2F422B22391500085A8B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\n# Path to the project directory\nproject_dir=\"${PROJECT_DIR}/${PROJECT_NAME}\"\n\nentitlements=\"${TARGET_TEMP_DIR}/${FULL_PRODUCT_NAME}.xcent\"\n#entitlements=\"${project_dir}/TestPlace.plist\"\necho \"Updating ${entitlements}\"\n\n# Extract the value of the \"AssociatedDomains\" property from the \"BuildEnvironmentVariables.plist\" file\nassociated_domains=$(plutil -extract AssociatedDomains.0 raw -o - \"${project_dir}/BuildEnvironmentVariables.plist\")\n\n# Insert the associated domain in the Entitlements file \nplutil -insert \"com\\.apple\\.developer\\.associated-domains\" -string \"$associated_domains\" -append \"${entitlements}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D11B7B852B07F51A009070FB /* Sources */ = {
@@ -310,6 +331,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"iGamingDemo/Preview Content\"";
 				DEVELOPMENT_TEAM = BW4X72F22B;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "ID Verification";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -341,6 +363,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"iGamingDemo/Preview Content\"";
 				DEVELOPMENT_TEAM = BW4X72F22B;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "ID Verification";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
