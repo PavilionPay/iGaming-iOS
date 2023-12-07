@@ -16,19 +16,17 @@ class ViewController: UIViewController {
     /// This method is triggered when the open button is pressed.
     ///
     /// To launch an iGaming session:
-    /// 1. Create an instance of `PavilionWebViewController` and presents it.
-    /// 2. Acquire an iGaming token securely from a backend service.
+    /// 1. Acquire an iGaming token securely from a backend service.
     ///  - Note: The token step is mocked here by calling the `initializePatronSession(forPatronType:transactionType:transactionAmount:)` method on `OperatorServer`, a mock service that generates or accepts a token and initializes an iGaming session using the provided patron and transaction information.
-    /// 3. Configure a `PavilionWebViewConfiguration` object using the returned URL.
+    /// 2. Configure a `PavilionWebViewConfiguration` object using the returned URL.
+    /// 3. Create an instance of `PavilionWebViewController` and present it.
     /// 4. Load the iGaming SDK with Pavilion and Plaid configuration options by calling the `loadPavilionSDK(with:)` method on the `PavilionWebViewController` instance.
     ///
     /// If the `initializePatronSession(forPatronType:transactionType:transactionAmount:)` method returns `nil`, the method will trigger a fatal error, indicating that the Pavilion SDK could not be initialized.
     ///
     /// - Note: The `createPavilionConfiguration(with:)` method can be used to create a full configuration for the `PavilionWebViewController`, but in this case, a simple configuration is created using only the returned URL.
     @objc private func openButtonPressed() {
-        let vc = PavilionWebViewController()
-        pavilionViewController = vc
-        show(vc, sender: self)
+        showIndicator()
         
         Task {
             // Steps to launch an iGaming session:
@@ -40,20 +38,24 @@ class ViewController: UIViewController {
             // 3. Configure a PavilionWebViewConfiguration object using the returned url and any optional presentation and Link callbacks
             // 4. Present the PavilionWebViewController
             
-            // MARK: Acquire iGaming SDK Session URL
+            // MARK: Acquire an iGaming token and initialize a session
             // 'OperatorServer' is a mock service that generates or accepts a token
             //      and then initializes an iGaming session using the provided
-            //      patron and transaction information
+            //      patron and transaction information.
+            //      Returns the SDK web component url after the session has been initialized.
             guard let url = await OperatorServer.initializePatronSession(forPatronType: patronType, transactionType: transactionType, transactionAmount: transactionAmount) else {
                 fatalError("Unable to initialize Pavilion SDK")
             }
             
-            // MARK: Configure PavilionWebViewController
+            // MARK: Create PavilionWebViewControllerConfiguration
             // Simplest case of creating configuration
             let configuration = PavilionWebViewConfiguration(url: url)
             
-            // Uncomment to use all config options
-            // let configuration = createPavilionConfiguration(with: url)
+            // MARK: Create a PavilionWebViewController instance and present it
+            let vc = PavilionWebViewController()
+            pavilionViewController = vc
+            show(vc, sender: self)
+            vc.loadViewIfNeeded()
             
             // MARK: Launch
             // Load the iGaming SDK with Pavilion and Plaid configuration options
@@ -124,7 +126,8 @@ class ViewController: UIViewController {
     
     private let niceBlue = UIColor(red: 0.039, green: 0.522, blue: 0.918, alpha: 1.0)
     private let numberFormatter = NumberFormatter()
-    
+    private let activityIndicator = UIActivityIndicatorView(style: .medium)
+
     
     // Pavilion Web View
     private var pavilionViewController: PavilionWebViewController?
@@ -140,6 +143,10 @@ class ViewController: UIViewController {
         navigationController?.isNavigationBarHidden = true
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        hideIndicator()
+    }
 }
 
 
@@ -193,12 +200,32 @@ extension ViewController: UITextFieldDelegate {
         openButton.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(openButton)
+        
+        activityIndicator.color = .white
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+        
         NSLayoutConstraint.activate([
             openButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
             openButton.leadingAnchor.constraint(equalTo: vStack.leadingAnchor),
             openButton.trailingAnchor.constraint(equalTo: vStack.trailingAnchor),
             openButton.heightAnchor.constraint(equalToConstant: 56),
+            activityIndicator.centerXAnchor.constraint(equalTo: openButton.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: openButton.centerYAnchor)
         ])
+    }
+    
+    private func showIndicator() {
+        openButton.setTitle(nil, for: .normal)
+        openButton.isUserInteractionEnabled = false
+        activityIndicator.startAnimating()
+    }
+    
+    private func hideIndicator() {
+        openButton.setTitle("Launch Pavilion Session", for: .normal)
+        openButton.isUserInteractionEnabled = true
+        activityIndicator.stopAnimating()
     }
     
     private func setupInput() {

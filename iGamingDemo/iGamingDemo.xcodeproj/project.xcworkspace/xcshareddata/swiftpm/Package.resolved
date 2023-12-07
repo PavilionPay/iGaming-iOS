@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PavilionPay/iGaming-iOS",
       "state" : {
-        "revision" : "28a70466721a3e8eea8a5f9a8b8c33104be0a8f4",
-        "version" : "0.1.0"
+        "revision" : "85e50c2e04846df77f1b1a12bcba44a0551f70b2",
+        "version" : "0.2.0"
       }
     },
     {

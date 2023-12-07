@@ -1,8 +1,7 @@
-//
 //  UserValues.swift
-//  iGamingDemo
+//  iGamingKit
 //
-//  Created by Wright, James on 11/30/23.
+//  Created by Pavilion Payments
 //
 
 import Foundation
