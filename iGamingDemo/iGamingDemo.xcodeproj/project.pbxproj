@@ -15,6 +15,7 @@
 		D11B7B9F2B07FA91009070FB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9B2B07FA91009070FB /* Extensions.swift */; };
 		D11B7BA02B07FA91009070FB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9C2B07FA91009070FB /* ViewController.swift */; };
 		D11B7BA12B07FA91009070FB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9D2B07FA91009070FB /* Models.swift */; };
+		D13D2F402B222C8A00085A8B /* BuildEnvironmentVariables.plist in Resources */ = {isa = PBXBuildFile; fileRef = D13D2F3F2B222C8A00085A8B /* BuildEnvironmentVariables.plist */; };
 		D16B59942B191582000B2F92 /* UserValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16B59932B191582000B2F92 /* UserValues.swift */; };
 		D188D3932B0D539E0076BE12 /* iGamingKit in Frameworks */ = {isa = PBXBuildFile; productRef = D188D3922B0D539E0076BE12 /* iGamingKit */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,8 @@
 		D11B7B9B2B07FA91009070FB /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D11B7B9C2B07FA91009070FB /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D11B7B9D2B07FA91009070FB /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		D13D2F3F2B222C8A00085A8B /* BuildEnvironmentVariables.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BuildEnvironmentVariables.plist; sourceTree = "<group>"; };
+		D13D2F412B222CA800085A8B /* appcenter-pre-build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "appcenter-pre-build.sh"; sourceTree = "<group>"; };
 		D16B59922B190E37000B2F92 /* iGamingDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iGamingDemo.entitlements; sourceTree = "<group>"; };
 		D16B59932B191582000B2F92 /* UserValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserValues.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,6 +67,8 @@
 		D11B7B8B2B07F51A009070FB /* iGamingDemo */ = {
 			isa = PBXGroup;
 			children = (
+				D13D2F412B222CA800085A8B /* appcenter-pre-build.sh */,
+				D13D2F3F2B222C8A00085A8B /* BuildEnvironmentVariables.plist */,
 				D16B59922B190E37000B2F92 /* iGamingDemo.entitlements */,
 				D11B7B8E2B07F51A009070FB /* ContentView.swift */,
 				D11B7B9C2B07FA91009070FB /* ViewController.swift */,
@@ -150,6 +155,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D13D2F402B222C8A00085A8B /* BuildEnvironmentVariables.plist in Resources */,
 				D11B7B942B07F51C009070FB /* Preview Assets.xcassets in Resources */,
 				D11B7B912B07F51C009070FB /* Assets.xcassets in Resources */,
 			);
