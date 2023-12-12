@@ -29,7 +29,7 @@ class OperatorServer {
     ///   - transactionAmount: The amount of the transaction.
     ///
     /// - Returns: A URL for the patron session, or `nil` if an error occurs.
-    static func initializePatronSession(forPatronType patronType: String, transactionType: String, transactionAmount: String) async -> URL? {
+    static func initializePatronSession(forPatronType patronType: String, transactionType: String, transactionAmount: String) async throws -> URL? {
         let patronData = patronType == "new"
         ? OperatorServer.newPatronTransactionData(withAmount: transactionAmount)
         : OperatorServer.patronTransactionData(withAmount: transactionAmount, type: transactionType)
@@ -46,18 +46,14 @@ class OperatorServer {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         print(request.allHTTPHeaderFields!)
         
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            data.printJson()
-            let patron = try JSONDecoder().decode(PatronResponse.self, from: data)
-            print(response)
-            let url = URL(string: "\(UserValues.sdkBaseUri)?mode=\(transactionType)&native=true&redirectUrl=\(UserValues.redirectUri)#\(patron.sessionId)")
-            return url
-        } catch {
-            print(error)
-        }
+        let (data, response) = try await URLSession.shared.data(for: request)
+        data.printJson()
+        let patron = try JSONDecoder().decode(PatronResponse.self, from: data)
+        print(response)
+        let result = URL(string: "\(UserValues.sdkBaseUri)?mode=\(transactionType)&native=true&redirectUrl=\(UserValues.redirectUri)#\(patron.sessionId)")
+        return result
         
-        return nil
+//        return nil
     }
     
 }
@@ -114,8 +110,8 @@ extension OperatorServer {
         try! JSONEncoder().encode(
             ExistingUserSessionRequest(
                 patronID: "cb7c887d-6687-4aa5-a664-31cf6c810df7",
-                vipCardNumber: "7210645917",
-                dateOfBirth: "5/28/1974",
+                vipCardNumber: "7210903859",
+                dateOfBirth: "11/30/1993",
                 remainingDailyDeposit: 999.99,
                 walletBalance: 1000,
                 transactionID: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),

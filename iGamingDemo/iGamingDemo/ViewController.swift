@@ -43,23 +43,31 @@ class ViewController: UIViewController {
             //      and then initializes an iGaming session using the provided
             //      patron and transaction information.
             //      Returns the SDK web component url after the session has been initialized.
-            guard let url = await OperatorServer.initializePatronSession(forPatronType: patronType, transactionType: transactionType, transactionAmount: transactionAmount) else {
-                fatalError("Unable to initialize Pavilion SDK")
+            do {
+                let url = try await OperatorServer.initializePatronSession(forPatronType: patronType, transactionType: transactionType, transactionAmount: transactionAmount)
+                                
+                // MARK: Create PavilionWebViewControllerConfiguration
+                // Simplest case of creating configuration
+                let configuration = PavilionWebViewConfiguration(url: url!)
+                
+                // MARK: Create a PavilionWebViewController instance and present it
+                let vc = PavilionWebViewController()
+                pavilionViewController = vc
+                show(vc, sender: self)
+                vc.loadViewIfNeeded()
+                
+                // MARK: Launch
+                // Load the iGaming SDK with Pavilion and Plaid configuration options
+                vc.loadPavilionSDK(with: configuration)
+                
+            } catch {
+                let alert = UIAlertController(title: "Error Initializing Sesion", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                    alert.dismiss(animated: true)
+                }))
+                hideIndicator()
+                present(alert, animated: true)
             }
-            
-            // MARK: Create PavilionWebViewControllerConfiguration
-            // Simplest case of creating configuration
-            let configuration = PavilionWebViewConfiguration(url: url)
-            
-            // MARK: Create a PavilionWebViewController instance and present it
-            let vc = PavilionWebViewController()
-            pavilionViewController = vc
-            show(vc, sender: self)
-            vc.loadViewIfNeeded()
-            
-            // MARK: Launch
-            // Load the iGaming SDK with Pavilion and Plaid configuration options
-            vc.loadPavilionSDK(with: configuration)
         }
         
     }
