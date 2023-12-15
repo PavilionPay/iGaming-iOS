@@ -44,7 +44,7 @@ class ViewController: UIViewController {
             //      patron and transaction information.
             //      Returns the SDK web component url after the session has been initialized.
             do {
-                let url = try await OperatorServer.initializePatronSession(forPatronType: patronType, transactionType: transactionType, transactionAmount: transactionAmount)
+                let url = try await OperatorServer.initializePatronSession(forPatronType: patronType, transactionType: transactionType, transactionAmount: transactionAmount, productType: productType)
                                 
                 // MARK: Create PavilionWebViewControllerConfiguration
                 // Simplest case of creating configuration
@@ -124,12 +124,16 @@ class ViewController: UIViewController {
     
     private let inputStack = UIStackView()
     private let transactionLabel = UILabel()
+    
     private let transactionTypeLabel = UILabel()
     private let transactionTypeControl = UISegmentedControl(items: ["Deposit", "Withdraw"])
-    private let patronTypeLabel = UILabel()
-    private let patronTypeControl = UISegmentedControl(items: ["New", "Existing"])
     private let amountLabel = UILabel()
     private let amountInput = UITextField()
+    private let patronTypeLabel = UILabel()
+    private let patronTypeControl = UISegmentedControl(items: ["New", "Existing"])
+    private let sessionTypeLabel = UILabel()
+    private let sessionTypeControl = UISegmentedControl(items: ["Preferred", "Online"])
+    
     private let spacerView = UIView()
     
     private let niceBlue = UIColor(red: 0.039, green: 0.522, blue: 0.918, alpha: 1.0)
@@ -142,6 +146,7 @@ class ViewController: UIViewController {
     private var transactionType = "deposit"
     private var transactionAmount = "13.50"
     private var patronType = "existing"
+    private var productType = "preferred"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -249,16 +254,7 @@ extension ViewController: UITextFieldDelegate {
         
         transactionTypeControl.selectedSegmentIndex = 0
         transactionTypeControl.translatesAutoresizingMaskIntoConstraints = false
-        transactionTypeControl.addTarget(self, action: #selector(transactionTypeChanged), for: .valueChanged)
-        
-        patronTypeLabel.text = "USER"
-        patronTypeLabel.textColor = niceBlue
-        patronTypeLabel.textAlignment = .right
-        patronTypeLabel.font = .boldSystemFont(ofSize: 12)
-        
-        patronTypeControl.selectedSegmentIndex = 1
-        patronTypeControl.translatesAutoresizingMaskIntoConstraints = false
-        patronTypeControl.addTarget(self, action: #selector(transactionTypeChanged), for: .valueChanged)
+        transactionTypeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
         
         amountLabel.text = "AMOUNT"
         amountLabel.textColor = niceBlue
@@ -272,22 +268,41 @@ extension ViewController: UITextFieldDelegate {
         amountInput.delegate = self
         amountInput.translatesAutoresizingMaskIntoConstraints = false
         
-        let patronStack = UIStackView(arrangedSubviews: [patronTypeLabel, patronTypeControl])
-        let typeStack = UIStackView(arrangedSubviews: [transactionTypeLabel, transactionTypeControl])
-        let amountStack = UIStackView(arrangedSubviews: [amountLabel, amountInput])
-        patronStack.spacing = 8
-        typeStack.spacing = 8
-        amountStack.spacing = 8
+        patronTypeLabel.text = "USER"
+        patronTypeLabel.textColor = niceBlue
+        patronTypeLabel.textAlignment = .right
+        patronTypeLabel.font = .boldSystemFont(ofSize: 12)
+        
+        patronTypeControl.selectedSegmentIndex = 1
+        patronTypeControl.translatesAutoresizingMaskIntoConstraints = false
+        patronTypeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+        
+        sessionTypeLabel.text = "PRODUCT"
+        sessionTypeLabel.textColor = niceBlue
+        sessionTypeLabel.textAlignment = .right
+        sessionTypeLabel.font = .boldSystemFont(ofSize: 12)
+        
+        sessionTypeControl.selectedSegmentIndex = 0
+        sessionTypeControl.translatesAutoresizingMaskIntoConstraints = false
+        sessionTypeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
         
         inputStack.axis = .vertical
         inputStack.spacing = 8
         inputStack.distribution = .fill
         inputStack.addArrangedSubview(transactionLabel)
         
-        inputStack.addArrangedSubview(typeStack)
-        inputStack.addArrangedSubview(amountStack)
-        inputStack.addArrangedSubview(patronStack)
-        
+        let stackViews = [
+            UIStackView(arrangedSubviews: [patronTypeLabel, patronTypeControl]),
+            UIStackView(arrangedSubviews: [amountLabel, amountInput]),
+            UIStackView(arrangedSubviews: [transactionTypeLabel, transactionTypeControl]),
+            UIStackView(arrangedSubviews: [sessionTypeLabel, sessionTypeControl]),
+        ]
+
+        stackViews.forEach {
+            $0.spacing = 8
+            inputStack.addArrangedSubview($0)
+        }
+                
         spacerView.translatesAutoresizingMaskIntoConstraints = false
         
         vStack.addArrangedSubview(spacerView)
@@ -297,7 +312,8 @@ extension ViewController: UITextFieldDelegate {
             spacerView.heightAnchor.constraint(equalToConstant: 40),
             amountLabel.widthAnchor.constraint(equalToConstant: 60),
             patronTypeLabel.widthAnchor.constraint(equalToConstant: 60),
-            transactionTypeLabel.widthAnchor.constraint(equalToConstant: 60)
+            transactionTypeLabel.widthAnchor.constraint(equalToConstant: 60),
+            sessionTypeLabel.widthAnchor.constraint(equalToConstant: 60)
         ])
     }
     
@@ -323,12 +339,21 @@ extension ViewController: UITextFieldDelegate {
         return number != nil
     }
     
-    @objc func transactionTypeChanged(_ sender: UISegmentedControl) {
+    @objc func segmentedControlChanged(_ sender: UISegmentedControl) {
         if sender == transactionTypeControl {
-            transactionType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? "").lowercased()
+            transactionType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? transactionType).lowercased()
         }
         if sender == patronTypeControl {
-            patronType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? "").lowercased()
+            patronType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? patronType).lowercased()
+            let isNewPatron = patronType == "new"
+            if isNewPatron {
+                transactionType = "deposit"
+                transactionTypeControl.selectedSegmentIndex = 0
+            }
+            transactionTypeControl.isEnabled = !isNewPatron
+        }
+        if sender == sessionTypeControl {
+            productType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? productType).lowercased()
         }
     }
 }
