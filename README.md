@@ -2,7 +2,7 @@
 
 This repository contains a sample application that demonstrates integration and use of the iGaming SDK for iOS.
 
-Detailed instructions on how to integrate with the iGaming SDK for iOS can be found in our [main documentation](https://ausenapccde03.azureedge.net/).
+Detailed instructions on how to integrate with the iGaming SDK for iOS can be found in our [main documentation](https://developer.vippreferred.com/).
 
 API Reference can be found [here](https://pavilionpay.github.io/iGaming-iOS/documentation/igamingkit/)
 
@@ -15,7 +15,7 @@ Before building and running the sample application replace any Xcode placeholder
 
 Follow these steps to integrate the iGaming SDK into your iOS project:
 
-Follow the steps outlined in the [Operator Setup](https://ausenapccde03.azureedge.net/operator-onboarding/operator-setup)
+Follow the steps outlined in the [Operator Setup](https://developer.vippreferred.com/operator-onboarding/operator-setup)
 
 
 ## Installation
@@ -47,4 +47,4 @@ vc.loadPavilionSDK(with: configuration)
 For more detailed information, refer to the following resources:
 
 - [Plaid iOS SDK](https://plaid.com/docs/link/ios/)
-- [Create Patron Session](https://ausenapccde03.azureedge.net/APIS/SDK/create-patron-session)
+- [Create Patron Session](https://developer.vippreferred.com/APIS/SDK/create-patron-session)
