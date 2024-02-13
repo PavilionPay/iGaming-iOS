@@ -20,7 +20,17 @@ class OperatorServer {
     
     /// A closure that returns an external token.
     static var getExternalToken: (() -> String)? = nil
+    
+    static var newUserSessionRequest: NewUserSessionRequest {
+        get { NewUserSessionRequest.readFromUserDefaults() ?? .exampleUser }
+        set { newValue.saveToUserDefaults() }
+    }
         
+    static var existingUserSessionRequest: ExistingUserSessionRequest {
+        get { ExistingUserSessionRequest.readFromUserDefaults() ?? .exampleUser }
+        set { newValue.saveToUserDefaults() }
+    }
+    
     /// Initializes a patron session for a given patron type, transaction type, and transaction amount.
     ///
     /// - Parameters:
@@ -74,24 +84,24 @@ extension OperatorServer {
         try! JSONEncoder().encode(
             NewUserSessionRequest(
                 patronId: UUID().uuidString,
-                firstName: "Jane",
-                middleInitial: "",
-                lastName: "Public",
-                dateOfBirth: "01/22/1981",
-                email: "Jane@Jane.com",
-                mobilePhone: "3023492104",
-                streetName: "1301 E Main ST",
-                city: "Carbondale",
-                state: "IL",
-                zip: "62901",
-                country: "USA",
-                idType: "DL",
-                idNumber: "7774213035",
-                idState: "IL",
-                routingNumber: "",
-                accountNumber: "",
-                walletBalance: "1000",
-                remainingDailyDeposit: "1000",
+                firstName: newUserSessionRequest.firstName,
+                middleInitial: newUserSessionRequest.middleInitial,
+                lastName: newUserSessionRequest.lastName,
+                dateOfBirth: newUserSessionRequest.dateOfBirth,
+                email: newUserSessionRequest.email,
+                mobilePhone: newUserSessionRequest.mobilePhone,
+                streetName: newUserSessionRequest.streetName,
+                city: newUserSessionRequest.city,
+                state: newUserSessionRequest.state,
+                zip: newUserSessionRequest.zip,
+                country: newUserSessionRequest.country,
+                idType: newUserSessionRequest.idType,
+                idNumber: newUserSessionRequest.idNumber,
+                idState: newUserSessionRequest.idState,
+                routingNumber: newUserSessionRequest.routingNumber,
+                accountNumber: newUserSessionRequest.accountNumber,
+                walletBalance: newUserSessionRequest.walletBalance,
+                remainingDailyDeposit: newUserSessionRequest.remainingDailyDeposit,
                 transactionId: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),
                 transactionAmount: Double(amount)!,
                 returnURL: UserValues.redirectUri,
@@ -110,9 +120,9 @@ extension OperatorServer {
     static func patronTransactionData(withAmount amount: String, type: String, productType: String) -> Data {
         try! JSONEncoder().encode(
             ExistingUserSessionRequest(
-                patronID: "cb7c887d-6687-4aa5-a664-31cf6c810df7",
-                vipCardNumber: "7210806973",
-                dateOfBirth: "04/15/1980",
+                patronID: existingUserSessionRequest.patronID,
+                vipCardNumber: existingUserSessionRequest.vipCardNumber,
+                dateOfBirth: existingUserSessionRequest.dateOfBirth,
                 remainingDailyDeposit: 999.99,
                 walletBalance: 1000,
                 transactionID: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),

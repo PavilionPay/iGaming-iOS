@@ -8,6 +8,7 @@
 import UIKit
 import iGamingKit
 import LinkKit // optional; required for presentation configuration
+import SwiftUI
 
 
 /// Demonstrates how to integrate and use the iGaming SDK.
@@ -121,6 +122,7 @@ class ViewController: UIViewController {
     private let welcomeLabel = UILabel()
     private let titleLabel = UILabel()
     private let openButton = UIButton()
+    private let editUserButton = UIButton()
     
     private let inputStack = UIStackView()
     private let transactionLabel = UILabel()
@@ -315,6 +317,17 @@ extension ViewController: UITextFieldDelegate {
             transactionTypeLabel.widthAnchor.constraint(equalToConstant: 60),
             sessionTypeLabel.widthAnchor.constraint(equalToConstant: 60)
         ])
+        
+        editUserButton.setTitle("Edit User Info", for: .normal)
+        editUserButton.setTitleColor(niceBlue, for: .normal)
+        editUserButton.addTarget(self, action: #selector(editUserButtonPressed), for: .touchUpInside)
+        
+        let editButtonSpacer = UIView()
+        editButtonSpacer.translatesAutoresizingMaskIntoConstraints = false
+        editButtonSpacer.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        vStack.addArrangedSubview(editButtonSpacer)
+        vStack.addArrangedSubview(editUserButton)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -355,5 +368,14 @@ extension ViewController: UITextFieldDelegate {
         if sender == sessionTypeControl {
             productType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? productType).lowercased()
         }
+    }
+    
+    @objc func editUserButtonPressed() {
+        if patronType == "new" {
+            present(UIHostingController(rootView: UserInfoView()), animated: true)
+        } else {
+            present(UIHostingController(rootView: ExistingUserInfoView()), animated: true)
+        }
+//        navigationController?.pushViewController(UIHostingController(rootView: UserInfoView()), animated: true)
     }
 }
