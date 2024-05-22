@@ -45,13 +45,24 @@ class ViewController: UIViewController {
             //      patron and transaction information.
             //      Returns the SDK web component url after the session has been initialized.
             do {
-                let url = try await OperatorServer.initializePatronSession(forPatronType: patronType, transactionType: transactionType, transactionAmount: transactionAmount, productType: productType)
+                let url = try await OperatorServer.initializePatronSession(forPatronType: patronType,
+                                                                           transactionType: transactionType,
+                                                                           transactionAmount: transactionAmount,
+                                                                           productType: productType,
+                                                                           cashierMode: cashierMode)
                              
-                // MARK: Create a PavilionWebViewController instance and present it
-                let vc = PavilionWebViewController() 
-                vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
-                pavilionViewController = vc
-                show(vc, sender: self)
+                if cashierMode {
+                    let vc = CashierModeViewController(nibName: "CashierModeViewController", bundle: nil)
+                    vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
+                    pavilionViewController = vc
+                    show(vc, sender: self)
+                } else {
+                    // MARK: Create a PavilionWebViewController instance and present it
+                    let vc = PavilionWebViewController()
+                    vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
+                    pavilionViewController = vc
+                    show(vc, sender: self)
+                }
                 
             } catch {
                 let alert = UIAlertController(title: "Error Initializing Sesion", message: error.localizedDescription, preferredStyle: .alert)
@@ -127,6 +138,8 @@ class ViewController: UIViewController {
     private let patronTypeControl = UISegmentedControl(items: ["New", "Existing"])
     private let sessionTypeLabel = UILabel()
     private let sessionTypeControl = UISegmentedControl(items: ["Preferred", "Online"])
+    private let cashierModeLabel = UILabel()
+    private let cashierModeControl = UISegmentedControl(items: ["No", "Yes"])
     
     private let spacerView = UIView()
     
@@ -136,11 +149,12 @@ class ViewController: UIViewController {
 
     
     // Pavilion Web View
-    private var pavilionViewController: PavilionWebViewController?
+    private var pavilionViewController: UIViewController?
     private var transactionType = "deposit"
     private var transactionAmount = "13.50"
     private var patronType = "existing"
     private var productType = "preferred"
+    private var cashierMode = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -280,6 +294,15 @@ extension ViewController: UITextFieldDelegate {
         sessionTypeControl.translatesAutoresizingMaskIntoConstraints = false
         sessionTypeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
         
+        cashierModeLabel.text = "CASHIER MODE"
+        cashierModeLabel.textColor = niceBlue
+        cashierModeLabel.textAlignment = .right
+        cashierModeLabel.font = .boldSystemFont(ofSize: 12)
+        
+        cashierModeControl.selectedSegmentIndex = 0
+        cashierModeControl.translatesAutoresizingMaskIntoConstraints = false
+        cashierModeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+        
         inputStack.axis = .vertical
         inputStack.spacing = 8
         inputStack.distribution = .fill
@@ -290,6 +313,7 @@ extension ViewController: UITextFieldDelegate {
             UIStackView(arrangedSubviews: [amountLabel, amountInput]),
             UIStackView(arrangedSubviews: [transactionTypeLabel, transactionTypeControl]),
             UIStackView(arrangedSubviews: [sessionTypeLabel, sessionTypeControl]),
+            UIStackView(arrangedSubviews: [cashierModeLabel, cashierModeControl]),
         ]
 
         stackViews.forEach {
@@ -307,7 +331,8 @@ extension ViewController: UITextFieldDelegate {
             amountLabel.widthAnchor.constraint(equalToConstant: 60),
             patronTypeLabel.widthAnchor.constraint(equalToConstant: 60),
             transactionTypeLabel.widthAnchor.constraint(equalToConstant: 60),
-            sessionTypeLabel.widthAnchor.constraint(equalToConstant: 60)
+            sessionTypeLabel.widthAnchor.constraint(equalToConstant: 60),
+            cashierModeLabel.widthAnchor.constraint(equalToConstant: 100)
         ])
         
         editUserButton.setTitle("Edit User Info", for: .normal)
@@ -359,6 +384,9 @@ extension ViewController: UITextFieldDelegate {
         }
         if sender == sessionTypeControl {
             productType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? productType).lowercased()
+        }
+        if sender == cashierModeControl {
+            cashierMode = cashierModeControl.selectedSegmentIndex == 1
         }
     }
     

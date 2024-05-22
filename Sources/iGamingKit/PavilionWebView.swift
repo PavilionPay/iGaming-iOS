@@ -16,12 +16,17 @@ public final class PavilionWebView: WKWebView {
     private var linkToken: String!
     private var linkCompletionReplyHandler: (Any?, String?) -> Void = { _, _ in }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         super.init(coder: coder)
     }
     
-    init(pavilionConfig: PavilionWebViewConfiguration ) {
-        self.pavilionConfig = pavilionConfig 
+    public init(pavilionConfig: PavilionWebViewConfiguration) {
+        super.init(frame: .zero, configuration: WKWebViewConfiguration())
+        startWebview(pavilionConfig: pavilionConfig)
+    }
+        
+    public func startWebview(pavilionConfig: PavilionWebViewConfiguration) {
+        self.pavilionConfig = pavilionConfig
         
         let prefs = WKWebpagePreferences()
         prefs.allowsContentJavaScript = true
@@ -29,7 +34,6 @@ public final class PavilionWebView: WKWebView {
         let wkPrefs = WKPreferences()
         wkPrefs.javaScriptCanOpenWindowsAutomatically = true
         
-        super.init(frame: .zero, configuration: WKWebViewConfiguration()) 
         self.configuration.defaultWebpagePreferences = prefs
         self.configuration.preferences = wkPrefs
         self.configuration.userContentController.addScriptMessageHandler(self, contentWorld: .page, name: "NativeBridge")
@@ -42,7 +46,7 @@ public final class PavilionWebView: WKWebView {
         
         load(URLRequest(url: pavilionConfig.url))
     }
-        
+    
     /// Returns a JavaScript string that adds a message event listener to the window.
     private var nativeBridgeJS: String {
         """
@@ -77,6 +81,10 @@ extension PavilionWebView: WKScriptMessageHandlerWithReply {
         
         if message.isCloseMessage {
             pavilionConfig.pavilionWebViewDidComplete()
+            return
+        }
+        
+        if message.isRequestFullscreenPlaid {
             return
         }
         
