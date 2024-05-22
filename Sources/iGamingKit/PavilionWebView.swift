@@ -85,6 +85,8 @@ extension PavilionWebView: WKScriptMessageHandlerWithReply {
         }
         
         if message.isRequestFullscreenPlaid {
+            pavilionConfig.pavilionWebViewDidComplete()
+            pavilionConfig.fullScreenRequested()
             return
         }
         

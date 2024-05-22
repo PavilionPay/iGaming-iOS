@@ -26,7 +26,7 @@ class ViewController: UIViewController {
     /// If the `initializePatronSession(forPatronType:transactionType:transactionAmount:)` method returns `nil`, the method will trigger a fatal error, indicating that the Pavilion SDK could not be initialized.
     ///
     /// - Note: The `createPavilionConfiguration(with:)` method can be used to create a full configuration for the `PavilionWebViewController`, but in this case, a simple configuration is created using only the returned URL.
-    @objc private func openButtonPressed() {
+    @objc private func launchWebSDK(forceFullView: Bool = false) {
         showIndicator()
         
         Task {
@@ -45,20 +45,21 @@ class ViewController: UIViewController {
             //      patron and transaction information.
             //      Returns the SDK web component url after the session has been initialized.
             do {
+                let isFullScreenMode = forceFullView || !cashierMode
                 let url = try await OperatorServer.initializePatronSession(forPatronType: patronType,
                                                                            transactionType: transactionType,
                                                                            transactionAmount: transactionAmount,
                                                                            productType: productType,
-                                                                           cashierMode: cashierMode)
-                             
-                if cashierMode {
-                    let vc = CashierModeViewController(nibName: "CashierModeViewController", bundle: nil)
+                                                                           cashierMode: !isFullScreenMode)
+                hideIndicator()
+                if isFullScreenMode {
+                    // MARK: Create a PavilionWebViewController instance and present it
+                    let vc = PavilionWebViewController()
                     vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
                     pavilionViewController = vc
                     show(vc, sender: self)
                 } else {
-                    // MARK: Create a PavilionWebViewController instance and present it
-                    let vc = PavilionWebViewController()
+                    let vc = CashierModeViewController(nibName: "CashierModeViewController", bundle: nil)
                     vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
                     pavilionViewController = vc
                     show(vc, sender: self)
@@ -113,6 +114,7 @@ class ViewController: UIViewController {
             url: url,
             linkPresentationMethod: presentationMethod,
             pavilionWebViewDidComplete: didComplete,
+            fullScreenRequsted: { didComplete(); self.launchWebSDK(forceFullView: true)},
             linkSuccess: success,
             linkEvent: event,
             linkExit: exit
@@ -214,7 +216,7 @@ extension ViewController: UITextFieldDelegate {
     
     private func setupButton() {
         openButton.backgroundColor = niceBlue
-        openButton.addTarget(self, action: #selector(openButtonPressed), for: .touchUpInside)
+        openButton.addTarget(self, action: #selector(launchWebSDK), for: .touchUpInside)
         openButton.layer.cornerRadius = 8
         openButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
         openButton.setTitle("Launch Pavilion Session", for: .normal)
