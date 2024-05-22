@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE9F8EAD2BFE44A400A0FF5D /* iGamingKit in Frameworks */ = {isa = PBXBuildFile; productRef = BE9F8EAC2BFE44A400A0FF5D /* iGamingKit */; };
 		D11B7B8D2B07F51A009070FB /* iGamingDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B8C2B07F51A009070FB /* iGamingDemoApp.swift */; };
 		D11B7B8F2B07F51A009070FB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B8E2B07F51A009070FB /* ContentView.swift */; };
 		D11B7B912B07F51C009070FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D11B7B902B07F51C009070FB /* Assets.xcassets */; };
@@ -19,7 +20,6 @@
 		D13E3E682B7BEC3900A554AD /* ExistingUserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13E3E672B7BEC3900A554AD /* ExistingUserInfoView.swift */; };
 		D15DA1172B62EC8200A9A618 /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15DA1162B62EC8200A9A618 /* UserInfoView.swift */; };
 		D16B59942B191582000B2F92 /* UserValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16B59932B191582000B2F92 /* UserValues.swift */; };
-		D188D3932B0D539E0076BE12 /* iGamingKit in Frameworks */ = {isa = PBXBuildFile; productRef = D188D3922B0D539E0076BE12 /* iGamingKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,7 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D188D3932B0D539E0076BE12 /* iGamingKit in Frameworks */,
+				BE9F8EAD2BFE44A400A0FF5D /* iGamingKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,7 +115,7 @@
 			);
 			name = iGamingDemo;
 			packageProductDependencies = (
-				D188D3922B0D539E0076BE12 /* iGamingKit */,
+				BE9F8EAC2BFE44A400A0FF5D /* iGamingKit */,
 			);
 			productName = iGamingDemo;
 			productReference = D11B7B892B07F51A009070FB /* iGamingDemo.app */;
@@ -146,7 +146,7 @@
 			);
 			mainGroup = D11B7B802B07F51A009070FB;
 			packageReferences = (
-				D188D3912B0D539E0076BE12 /* XCRemoteSwiftPackageReference "iGaming-iOS" */,
+				BE9F8EAB2BFE44A400A0FF5D /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = D11B7B8A2B07F51A009070FB /* Products */;
 			projectDirPath = "";
@@ -336,12 +336,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iGamingDemo/iGamingDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iGamingDemo/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BW4X72F22B;
+				DEVELOPMENT_TEAM = BW4X72F22B;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -359,7 +357,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.pavilionpay.iGamingDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = iGamingDemoAppStoreDistribution;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -373,12 +370,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iGamingDemo/iGamingDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iGamingDemo/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BW4X72F22B;
+				DEVELOPMENT_TEAM = BW4X72F22B;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -396,7 +391,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.pavilionpay.iGamingDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = iGamingDemoAppStoreDistribution;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -426,21 +420,16 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		D188D3912B0D539E0076BE12 /* XCRemoteSwiftPackageReference "iGaming-iOS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/PavilionPay/iGaming-iOS";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		BE9F8EAB2BFE44A400A0FF5D /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D188D3922B0D539E0076BE12 /* iGamingKit */ = {
+		BE9F8EAC2BFE44A400A0FF5D /* iGamingKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D188D3912B0D539E0076BE12 /* XCRemoteSwiftPackageReference "iGaming-iOS" */;
 			productName = iGamingKit;
 		};
 /* End XCSwiftPackageProductDependency section */

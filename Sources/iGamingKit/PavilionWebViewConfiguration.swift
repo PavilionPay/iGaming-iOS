@@ -24,13 +24,13 @@ import LinkKit
 /// The `init(url:linkPresentationMethod:linkSuccess:linkEvent:linkExit:pavilionWebViewDidComplete:)` initializer allows you to create a `PavilionWebViewConfiguration` instance with all these properties.
 public struct PavilionWebViewConfiguration {
     public let url: URL
-    public let linkPresentationMethod: PresentationMethod?
+    public let linkPresentationMethod: PresentationMethod
     public let linkSuccess: LinkKit.OnSuccessHandler?
     public let linkEvent: LinkKit.OnEventHandler?
     public let linkExit: LinkKit.OnExitHandler?
-    public let pavilionWebViewDidComplete: ((PavilionWebViewController) -> Void)?
+    public let pavilionWebViewDidComplete: () -> Void
     
-    public init(url: URL, linkPresentationMethod: PresentationMethod? = nil, linkSuccess: LinkKit.OnSuccessHandler? = nil, linkEvent: LinkKit.OnEventHandler? = nil, linkExit: LinkKit.OnExitHandler? = nil, pavilionWebViewDidComplete: ( (PavilionWebViewController) -> Void)? = nil) {
+    public init(url: URL, linkPresentationMethod: PresentationMethod, pavilionWebViewDidComplete: @escaping () -> Void, linkSuccess: LinkKit.OnSuccessHandler? = nil, linkEvent: LinkKit.OnEventHandler? = nil, linkExit: LinkKit.OnExitHandler? = nil) {
         self.url = url
         self.linkPresentationMethod = linkPresentationMethod
         self.linkSuccess = linkSuccess

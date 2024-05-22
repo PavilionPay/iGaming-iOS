@@ -46,20 +46,12 @@ class ViewController: UIViewController {
             //      Returns the SDK web component url after the session has been initialized.
             do {
                 let url = try await OperatorServer.initializePatronSession(forPatronType: patronType, transactionType: transactionType, transactionAmount: transactionAmount, productType: productType)
-                                
-                // MARK: Create PavilionWebViewControllerConfiguration
-                // Simplest case of creating configuration
-                let configuration = PavilionWebViewConfiguration(url: url!)
-                
+                             
                 // MARK: Create a PavilionWebViewController instance and present it
-                let vc = PavilionWebViewController()
+                let vc = PavilionWebViewController() 
+                vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
                 pavilionViewController = vc
                 show(vc, sender: self)
-                vc.loadViewIfNeeded()
-                
-                // MARK: Launch
-                // Load the iGaming SDK with Pavilion and Plaid configuration options
-                vc.loadPavilionSDK(with: configuration)
                 
             } catch {
                 let alert = UIAlertController(title: "Error Initializing Sesion", message: error.localizedDescription, preferredStyle: .alert)
@@ -84,7 +76,7 @@ class ViewController: UIViewController {
     /// - A completion handler for when the `PavilionWebViewController` finishes its work. This handler pops the controller from the navigation stack.
     ///
     /// This method demonstrates how to create a full configuration for the `PavilionWebViewController`, including how to handle various events and callbacks.
-    private func createPavilionConfiguration(with url: URL) -> PavilionWebViewConfiguration {
+    private func createPavilionConfiguration(with url: URL, viewController: UIViewController) -> PavilionWebViewConfiguration {
         let nav = navigationController
         
         let presentationMethod = PresentationMethod.custom({ vc in
@@ -102,17 +94,17 @@ class ViewController: UIViewController {
         let exit: LinkKit.OnExitHandler = { exit in
             print("Link Exit with\n\t error: \(exit.error?.localizedDescription ?? "nil")\n\t metadata: \(exit.metadata)")
         }
-        let didComplete = { (webView: PavilionWebViewController) -> Void in
-            webView.navigationController?.popViewController(animated: true)
+        let didComplete = { () -> Void in
+            viewController.navigationController?.popViewController(animated: true)
         }
         
         let configuration = PavilionWebViewConfiguration(
             url: url,
             linkPresentationMethod: presentationMethod,
+            pavilionWebViewDidComplete: didComplete,
             linkSuccess: success,
             linkEvent: event,
-            linkExit: exit,
-            pavilionWebViewDidComplete: didComplete
+            linkExit: exit
         )
         return configuration
     }
