@@ -26,7 +26,7 @@ class ViewController: UIViewController {
     /// If the `initializePatronSession(forPatronType:transactionType:transactionAmount:)` method returns `nil`, the method will trigger a fatal error, indicating that the Pavilion SDK could not be initialized.
     ///
     /// - Note: The `createPavilionConfiguration(with:)` method can be used to create a full configuration for the `PavilionWebViewController`, but in this case, a simple configuration is created using only the returned URL.
-    @objc private func openButtonPressed() {
+    @objc private func launchWebSDK(forceFullView: Bool = false) {
         showIndicator()
         
         Task {
@@ -45,21 +45,25 @@ class ViewController: UIViewController {
             //      patron and transaction information.
             //      Returns the SDK web component url after the session has been initialized.
             do {
-                let url = try await OperatorServer.initializePatronSession(forPatronType: patronType, transactionType: transactionType, transactionAmount: transactionAmount, productType: productType)
-                                
-                // MARK: Create PavilionWebViewControllerConfiguration
-                // Simplest case of creating configuration
-                let configuration = PavilionWebViewConfiguration(url: url!)
-                
-                // MARK: Create a PavilionWebViewController instance and present it
-                let vc = PavilionWebViewController()
-                pavilionViewController = vc
-                show(vc, sender: self)
-                vc.loadViewIfNeeded()
-                
-                // MARK: Launch
-                // Load the iGaming SDK with Pavilion and Plaid configuration options
-                vc.loadPavilionSDK(with: configuration)
+                let isFullScreenMode = forceFullView || !cashierMode
+                let url = try await OperatorServer.initializePatronSession(forPatronType: patronType,
+                                                                           transactionType: transactionType,
+                                                                           transactionAmount: transactionAmount,
+                                                                           productType: productType,
+                                                                           cashierMode: !isFullScreenMode)
+                hideIndicator()
+                if isFullScreenMode {
+                    // MARK: Create a PavilionWebViewController instance and present it
+                    let vc = PavilionWebViewController()
+                    vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
+                    pavilionViewController = vc
+                    show(vc, sender: self)
+                } else {
+                    let vc = CashierModeViewController(nibName: "CashierModeViewController", bundle: nil)
+                    vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
+                    pavilionViewController = vc
+                    show(vc, sender: self)
+                }
                 
             } catch {
                 let alert = UIAlertController(title: "Error Initializing Sesion", message: error.localizedDescription, preferredStyle: .alert)
@@ -84,7 +88,7 @@ class ViewController: UIViewController {
     /// - A completion handler for when the `PavilionWebViewController` finishes its work. This handler pops the controller from the navigation stack.
     ///
     /// This method demonstrates how to create a full configuration for the `PavilionWebViewController`, including how to handle various events and callbacks.
-    private func createPavilionConfiguration(with url: URL) -> PavilionWebViewConfiguration {
+    private func createPavilionConfiguration(with url: URL, viewController: UIViewController) -> PavilionWebViewConfiguration {
         let nav = navigationController
         
         let presentationMethod = PresentationMethod.custom({ vc in
@@ -102,17 +106,18 @@ class ViewController: UIViewController {
         let exit: LinkKit.OnExitHandler = { exit in
             print("Link Exit with\n\t error: \(exit.error?.localizedDescription ?? "nil")\n\t metadata: \(exit.metadata)")
         }
-        let didComplete = { (webView: PavilionWebViewController) -> Void in
-            webView.navigationController?.popViewController(animated: true)
+        let didComplete = { () -> Void in
+            viewController.navigationController?.popViewController(animated: true)
         }
         
         let configuration = PavilionWebViewConfiguration(
             url: url,
             linkPresentationMethod: presentationMethod,
+            pavilionWebViewDidComplete: didComplete,
+            fullScreenRequsted: { didComplete(); self.launchWebSDK(forceFullView: true)},
             linkSuccess: success,
             linkEvent: event,
-            linkExit: exit,
-            pavilionWebViewDidComplete: didComplete
+            linkExit: exit
         )
         return configuration
     }
@@ -135,6 +140,8 @@ class ViewController: UIViewController {
     private let patronTypeControl = UISegmentedControl(items: ["New", "Existing"])
     private let sessionTypeLabel = UILabel()
     private let sessionTypeControl = UISegmentedControl(items: ["Preferred", "Online"])
+    private let cashierModeLabel = UILabel()
+    private let cashierModeControl = UISegmentedControl(items: ["No", "Yes"])
     
     private let spacerView = UIView()
     
@@ -144,11 +151,12 @@ class ViewController: UIViewController {
 
     
     // Pavilion Web View
-    private var pavilionViewController: PavilionWebViewController?
+    private var pavilionViewController: UIViewController?
     private var transactionType = "deposit"
     private var transactionAmount = "13.50"
     private var patronType = "existing"
     private var productType = "preferred"
+    private var cashierMode = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -208,7 +216,7 @@ extension ViewController: UITextFieldDelegate {
     
     private func setupButton() {
         openButton.backgroundColor = niceBlue
-        openButton.addTarget(self, action: #selector(openButtonPressed), for: .touchUpInside)
+        openButton.addTarget(self, action: #selector(launchWebSDK), for: .touchUpInside)
         openButton.layer.cornerRadius = 8
         openButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
         openButton.setTitle("Launch Pavilion Session", for: .normal)
@@ -288,6 +296,15 @@ extension ViewController: UITextFieldDelegate {
         sessionTypeControl.translatesAutoresizingMaskIntoConstraints = false
         sessionTypeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
         
+        cashierModeLabel.text = "CASHIER MODE"
+        cashierModeLabel.textColor = niceBlue
+        cashierModeLabel.textAlignment = .right
+        cashierModeLabel.font = .boldSystemFont(ofSize: 12)
+        
+        cashierModeControl.selectedSegmentIndex = 0
+        cashierModeControl.translatesAutoresizingMaskIntoConstraints = false
+        cashierModeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+        
         inputStack.axis = .vertical
         inputStack.spacing = 8
         inputStack.distribution = .fill
@@ -298,6 +315,7 @@ extension ViewController: UITextFieldDelegate {
             UIStackView(arrangedSubviews: [amountLabel, amountInput]),
             UIStackView(arrangedSubviews: [transactionTypeLabel, transactionTypeControl]),
             UIStackView(arrangedSubviews: [sessionTypeLabel, sessionTypeControl]),
+            UIStackView(arrangedSubviews: [cashierModeLabel, cashierModeControl]),
         ]
 
         stackViews.forEach {
@@ -315,7 +333,8 @@ extension ViewController: UITextFieldDelegate {
             amountLabel.widthAnchor.constraint(equalToConstant: 60),
             patronTypeLabel.widthAnchor.constraint(equalToConstant: 60),
             transactionTypeLabel.widthAnchor.constraint(equalToConstant: 60),
-            sessionTypeLabel.widthAnchor.constraint(equalToConstant: 60)
+            sessionTypeLabel.widthAnchor.constraint(equalToConstant: 60),
+            cashierModeLabel.widthAnchor.constraint(equalToConstant: 100)
         ])
         
         editUserButton.setTitle("Edit User Info", for: .normal)
@@ -367,6 +386,9 @@ extension ViewController: UITextFieldDelegate {
         }
         if sender == sessionTypeControl {
             productType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? productType).lowercased()
+        }
+        if sender == cashierModeControl {
+            cashierMode = cashierModeControl.selectedSegmentIndex == 1
         }
     }
     

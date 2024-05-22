@@ -39,7 +39,11 @@ class OperatorServer {
     ///   - transactionAmount: The amount of the transaction.
     ///
     /// - Returns: A URL for the patron session, or `nil` if an error occurs.
-    static func initializePatronSession(forPatronType patronType: String, transactionType: String, transactionAmount: String, productType: String) async throws -> URL? {
+    static func initializePatronSession(forPatronType patronType: String,
+                                        transactionType: String,
+                                        transactionAmount: String,
+                                        productType: String,
+                                        cashierMode: Bool) async throws -> URL? {
         let product = productType == "preferred" ? "0" : "1"
         let patronData = patronType == "new"
         ? OperatorServer.newPatronTransactionData(withAmount: transactionAmount, productType: product)
@@ -62,7 +66,7 @@ class OperatorServer {
         data.printJson()
         let patron = try JSONDecoder().decode(PatronResponse.self, from: data)
         print(response)
-        let result = URL(string: "\(UserValues.sdkBaseUri)?mode=\(transactionType)&native=true&redirectUrl=\(UserValues.redirectUri)#\(patron.sessionId)")
+        let result = URL(string: "\(UserValues.sdkBaseUri)?mode=\(transactionType)&native=true\(cashierMode ? "&view=cashier" : "")&redirectUrl=\(UserValues.redirectUri)#\(patron.sessionId)")
         print(result!.absoluteString)
         return result
     }

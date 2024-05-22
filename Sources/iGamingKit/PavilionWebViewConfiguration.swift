@@ -24,18 +24,27 @@ import LinkKit
 /// The `init(url:linkPresentationMethod:linkSuccess:linkEvent:linkExit:pavilionWebViewDidComplete:)` initializer allows you to create a `PavilionWebViewConfiguration` instance with all these properties.
 public struct PavilionWebViewConfiguration {
     public let url: URL
-    public let linkPresentationMethod: PresentationMethod?
+    public let linkPresentationMethod: PresentationMethod
+    public let pavilionWebViewDidComplete: () -> Void
+    public let fullScreenRequested: () -> Void
     public let linkSuccess: LinkKit.OnSuccessHandler?
     public let linkEvent: LinkKit.OnEventHandler?
     public let linkExit: LinkKit.OnExitHandler?
-    public let pavilionWebViewDidComplete: ((PavilionWebViewController) -> Void)?
     
-    public init(url: URL, linkPresentationMethod: PresentationMethod? = nil, linkSuccess: LinkKit.OnSuccessHandler? = nil, linkEvent: LinkKit.OnEventHandler? = nil, linkExit: LinkKit.OnExitHandler? = nil, pavilionWebViewDidComplete: ( (PavilionWebViewController) -> Void)? = nil) {
+    public init(url: URL, 
+                linkPresentationMethod: PresentationMethod,
+                pavilionWebViewDidComplete: @escaping () -> Void,
+                fullScreenRequsted: @escaping () -> Void,
+                linkSuccess: LinkKit.OnSuccessHandler? = nil,
+                linkEvent: LinkKit.OnEventHandler? = nil,
+                linkExit: LinkKit.OnExitHandler? = nil) {
         self.url = url
         self.linkPresentationMethod = linkPresentationMethod
+        self.pavilionWebViewDidComplete = pavilionWebViewDidComplete
+        self.fullScreenRequested = fullScreenRequsted
         self.linkSuccess = linkSuccess
         self.linkEvent = linkEvent
         self.linkExit = linkExit
-        self.pavilionWebViewDidComplete = pavilionWebViewDidComplete
+        
     }
 }
