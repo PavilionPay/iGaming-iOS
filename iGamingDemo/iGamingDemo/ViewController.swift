@@ -114,7 +114,13 @@ class ViewController: UIViewController {
             url: url,
             linkPresentationMethod: presentationMethod,
             pavilionWebViewDidComplete: didComplete,
-            fullScreenRequsted: { didComplete(); self.launchWebSDK(forceFullView: true)},
+            fullScreenRequsted: { 
+                didComplete()
+                let vc = PavilionWebViewController()
+                vc.pavilionConfig = self.createPavilionConfiguration(with: OperatorServer.createPatronSessionUrl(transactionType: self.transactionType), viewController: vc)
+                self.pavilionViewController = vc
+                self.show(vc, sender: self)
+            },
             linkSuccess: success,
             linkEvent: event,
             linkExit: exit
@@ -128,6 +134,7 @@ class ViewController: UIViewController {
     private let titleLabel = UILabel()
     private let openButton = UIButton()
     private let editUserButton = UIButton()
+    private let editOperatorButton = UIButton()
     
     private let inputStack = UIStackView()
     private let transactionLabel = UILabel()
@@ -148,7 +155,7 @@ class ViewController: UIViewController {
     private let niceBlue = UIColor(red: 0.039, green: 0.522, blue: 0.918, alpha: 1.0)
     private let numberFormatter = NumberFormatter()
     private let activityIndicator = UIActivityIndicatorView(style: .medium)
-
+    
     
     // Pavilion Web View
     private var pavilionViewController: UIViewController?
@@ -170,10 +177,6 @@ class ViewController: UIViewController {
         super.viewDidAppear(animated)
         hideIndicator()
     }
-}
-
-
-extension ViewController: UITextFieldDelegate {
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
@@ -317,12 +320,12 @@ extension ViewController: UITextFieldDelegate {
             UIStackView(arrangedSubviews: [sessionTypeLabel, sessionTypeControl]),
             UIStackView(arrangedSubviews: [cashierModeLabel, cashierModeControl]),
         ]
-
+        
         stackViews.forEach {
             $0.spacing = 8
             inputStack.addArrangedSubview($0)
         }
-                
+        
         spacerView.translatesAutoresizingMaskIntoConstraints = false
         
         vStack.addArrangedSubview(spacerView)
@@ -345,30 +348,18 @@ extension ViewController: UITextFieldDelegate {
         editButtonSpacer.translatesAutoresizingMaskIntoConstraints = false
         editButtonSpacer.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
+        editOperatorButton.setTitle("Enter Operator Token", for: .normal)
+        editOperatorButton.setTitleColor(niceBlue, for: .normal)
+        editOperatorButton.addTarget(self, action: #selector(editOperatorButtonPressed), for: .touchUpInside)
+        
+        let editOperatorSpacer = UIView()
+        editOperatorSpacer.translatesAutoresizingMaskIntoConstraints = false
+        editOperatorSpacer.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
         vStack.addArrangedSubview(editButtonSpacer)
         vStack.addArrangedSubview(editUserButton)
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let updatedText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-        
-        if updatedText.isEmpty {
-            return true
-        }
-        
-        let components = updatedText.components(separatedBy: ".")
-        if components.count == 2, components[1].count > 2 {
-            return false
-        }
-        
-        let number = numberFormatter.number(from: updatedText)
-        transactionAmount = number?.stringValue ?? "13.50"
-        return number != nil
+        vStack.addArrangedSubview(editOperatorSpacer)
+        vStack.addArrangedSubview(editOperatorButton)
     }
     
     @objc func segmentedControlChanged(_ sender: UISegmentedControl) {
@@ -398,6 +389,48 @@ extension ViewController: UITextFieldDelegate {
         } else {
             present(UIHostingController(rootView: ExistingUserInfoView()), animated: true)
         }
-//        navigationController?.pushViewController(UIHostingController(rootView: UserInfoView()), animated: true)
+        //        navigationController?.pushViewController(UIHostingController(rootView: UserInfoView()), animated: true)
+    }
+    
+    @objc func editOperatorButtonPressed() {
+        let alert = UIAlertController(title: "Alert", message: "Message", preferredStyle: UIAlertController.Style.alert)
+        alert.title = "Enter Operator token"
+        alert.message = ""
+        alert.addAction(UIAlertAction(title: "Save", style: UIAlertAction.Style.default, handler: { action in
+            if let text = alert.textFields?[0].text, !text.isEmpty {
+                OperatorServer.externalToken = text
+            } else {
+                OperatorServer.externalToken = nil
+            }
+        }))
+        alert.addTextField(configurationHandler: {(textField: UITextField!) in
+            textField.placeholder = "Enter operator token"
+            textField.text = OperatorServer.externalToken
+        })
+        self.present(alert, animated: true, completion: nil)
+    }
+}
+
+extension ViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let updatedText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
+        
+        if updatedText.isEmpty {
+            return true
+        }
+        
+        let components = updatedText.components(separatedBy: ".")
+        if components.count == 2, components[1].count > 2 {
+            return false
+        }
+        
+        let number = numberFormatter.number(from: updatedText)
+        transactionAmount = number?.stringValue ?? "13.50"
+        return number != nil
     }
 }

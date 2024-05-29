@@ -1,4 +1,5 @@
 {
+  "originHash" : "c0341d434e7350f2afe06ffcbd403770596937cd4a122e7901eb4264c8adf474",
   "pins" : [
     {
       "identity" : "plaid-link-ios",
@@ -10,5 +11,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

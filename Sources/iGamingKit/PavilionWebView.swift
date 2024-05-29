@@ -34,6 +34,8 @@ public final class PavilionWebView: WKWebView {
         let wkPrefs = WKPreferences()
         wkPrefs.javaScriptCanOpenWindowsAutomatically = true
         
+        self.uiDelegate = self
+        
         self.configuration.defaultWebpagePreferences = prefs
         self.configuration.preferences = wkPrefs
         self.configuration.userContentController.addScriptMessageHandler(self, contentWorld: .page, name: "NativeBridge")
@@ -60,6 +62,23 @@ public final class PavilionWebView: WKWebView {
         let controller = configuration.userContentController
         controller.removeAllUserScripts()
         controller.removeScriptMessageHandler(forName: "NativeBridge", contentWorld: .page)
+    }
+}
+
+extension PavilionWebView: WKUIDelegate {
+    /**
+     Delegte method that must be handled to open Chase OAuth UIs.
+     See https://plaid.com/docs/link/oauth/#webview
+     */
+    public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        print("Attempting to open new window for \(navigationAction.request.url!)")
+        guard let url = navigationAction.request.url else {
+            return nil
+        }
+        
+        // Open the external URL in Safari
+        UIApplication.shared.open(url)
+        return nil
     }
 }
 

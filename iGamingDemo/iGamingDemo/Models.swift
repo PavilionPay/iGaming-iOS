@@ -96,7 +96,7 @@ extension NewUserSessionRequest {
             remainingDailyDeposit: "1000",
             transactionId: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),
             transactionAmount: 10.33,
-            returnURL: UserValues.redirectUri,
+            returnURL: BuildEnvironment.shared.redirectUri,
             productType: "preferred"
         )
     }
@@ -133,7 +133,7 @@ extension ExistingUserSessionRequest {
             transactionID: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),
             transactionAmount: 10.33,
             transactionType: 0,
-            returnURL: UserValues.redirectUri,
+            returnURL: BuildEnvironment.shared.redirectUri,
             productType: "preferred"
         )
     }

@@ -8,6 +8,15 @@
 import Foundation
 import CryptoKit
 
+enum SessionCreationError: LocalizedError {
+    case badToken(String)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .badToken(let errorString): return errorString
+        }
+    }
+}
 
 /// Operator Server
 ///
@@ -19,13 +28,14 @@ import CryptoKit
 class OperatorServer {
     
     /// A closure that returns an external token.
-    static var getExternalToken: (() -> String)? = nil
+    static var externalToken: String? = nil
+    static var currentSession: String? = nil
     
     static var newUserSessionRequest: NewUserSessionRequest {
         get { NewUserSessionRequest.readFromUserDefaults() ?? .exampleUser }
         set { newValue.saveToUserDefaults() }
     }
-        
+    
     static var existingUserSessionRequest: ExistingUserSessionRequest {
         get { ExistingUserSessionRequest.readFromUserDefaults() ?? .exampleUser }
         set { newValue.saveToUserDefaults() }
@@ -49,26 +59,36 @@ class OperatorServer {
         ? OperatorServer.newPatronTransactionData(withAmount: transactionAmount, productType: product)
         : OperatorServer.patronTransactionData(withAmount: transactionAmount, type: transactionType, productType: product)
         
-        let url = URL(string: "\(UserValues.sdkBaseUri)/api/patronsession/\(patronType)")!
+        let url = URL(string: "\(BuildEnvironment.shared.sdkBaseUri)/api/patronsession/\(patronType)")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = patronData
+
+        if let s = String(data: patronData, encoding: .utf8) {
+            print(s)
+        }
         
-        print(request.httpBody!.printJson())
-        
-        let token = getExternalToken?() ?? TokenGenerator.generate()!
+        let token = externalToken ?? TokenGenerator.generate()!
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         print(request.allHTTPHeaderFields!)
         
         let (data, response) = try await URLSession.shared.data(for: request)
         print(String(data: data, encoding: .utf8) ?? "nil")
-        data.printJson()
+
+        if let res = response as? HTTPURLResponse, res.statusCode >= 400 {
+            throw SessionCreationError.badToken("Operator token invalid; please check")
+        }
         let patron = try JSONDecoder().decode(PatronResponse.self, from: data)
         print(response)
-        let result = URL(string: "\(UserValues.sdkBaseUri)?mode=\(transactionType)&native=true\(cashierMode ? "&view=cashier" : "")&redirectUrl=\(UserValues.redirectUri)#\(patron.sessionId)")
+        currentSession = patron.sessionId
+        return createPatronSessionUrl(transactionType: transactionType, sessionId: currentSession, cashierMode: cashierMode)
+    }
+    
+    static func createPatronSessionUrl(transactionType: String, sessionId: String? = currentSession, cashierMode: Bool = false) -> URL {
+        let result = URL(string: "\(BuildEnvironment.shared.sdkBaseUri)?mode=\(transactionType)\(cashierMode ? "&view=cashier" : "&native=true")#\(currentSession!)")
         print(result!.absoluteString)
-        return result
+        return result!
     }
     
 }
@@ -108,7 +128,7 @@ extension OperatorServer {
                 remainingDailyDeposit: newUserSessionRequest.remainingDailyDeposit,
                 transactionId: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),
                 transactionAmount: Double(amount)!,
-                returnURL: UserValues.redirectUri,
+                returnURL: BuildEnvironment.shared.redirectUri,
                 productType: productType
             )
         )
@@ -132,7 +152,7 @@ extension OperatorServer {
                 transactionID: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),
                 transactionAmount: Double(amount)!,
                 transactionType: type == "deposit" ? 0 : 1,
-                returnURL: UserValues.redirectUri,
+                returnURL: BuildEnvironment.shared.redirectUri,
                 productType: productType
             )
         )
@@ -153,8 +173,8 @@ fileprivate enum TokenGenerator {
         var nbf: Int
         var exp: Int
         var iat: Int
-        var iss = UserValues.issuer
-        var aud = UserValues.audience
+        var iss = BuildEnvironment.shared.issuer
+        var aud = BuildEnvironment.shared.audience
     }
     
     /// Generates a JWT token.
@@ -164,24 +184,30 @@ fileprivate enum TokenGenerator {
         let now = Int(Date.now.timeIntervalSince1970)
         let payload = Payload(nbf: now - 300, exp: now + 1200, iat: now)
         
-        let decoded = Data(base64Encoded: Data(UserValues.secret.utf8))!
+        let decoded = Data(base64Encoded: Data(BuildEnvironment.shared.secret.utf8))!
         let privateKey = SymmetricKey(data: decoded)
         
         let headerJSONData = try! JSONEncoder().encode(Header())
-        let headerBase64String = headerJSONData.urlSafeBase64EncodedString
-        
+        let headerBase64String = urlSafeBase64EncodedString(headerJSONData)
         
         let payloadJSONData = try! JSONEncoder().encode(payload)
-        let payloadBase64String = payloadJSONData.urlSafeBase64EncodedString
+        let payloadBase64String = urlSafeBase64EncodedString(payloadJSONData)
         
         let toSign = Data((headerBase64String + "." + payloadBase64String).utf8)
         
         let signature = HMAC<SHA256>.authenticationCode(for: toSign, using: privateKey)
-        let signatureBase64String = Data(signature).urlSafeBase64EncodedString
+        let signatureBase64String = urlSafeBase64EncodedString(Data(signature))
         
         let token = [headerBase64String, payloadBase64String, signatureBase64String].joined(separator: ".")
         
         print("")
         return token
+    }
+    
+    static func urlSafeBase64EncodedString(_ data: Data) -> String {
+        return  data.base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
     }
 }

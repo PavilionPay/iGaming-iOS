@@ -15,16 +15,16 @@
 		D11B7B912B07F51C009070FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D11B7B902B07F51C009070FB /* Assets.xcassets */; };
 		D11B7B942B07F51C009070FB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D11B7B932B07F51C009070FB /* Preview Assets.xcassets */; };
 		D11B7B9E2B07FA91009070FB /* OperatorServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9A2B07FA91009070FB /* OperatorServer.swift */; };
-		D11B7B9F2B07FA91009070FB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9B2B07FA91009070FB /* Extensions.swift */; };
 		D11B7BA02B07FA91009070FB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9C2B07FA91009070FB /* ViewController.swift */; };
 		D11B7BA12B07FA91009070FB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B9D2B07FA91009070FB /* Models.swift */; };
 		D13D2F402B222C8A00085A8B /* BuildEnvironmentVariables.plist in Resources */ = {isa = PBXBuildFile; fileRef = D13D2F3F2B222C8A00085A8B /* BuildEnvironmentVariables.plist */; };
 		D13E3E682B7BEC3900A554AD /* ExistingUserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13E3E672B7BEC3900A554AD /* ExistingUserInfoView.swift */; };
 		D15DA1172B62EC8200A9A618 /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15DA1162B62EC8200A9A618 /* UserInfoView.swift */; };
-		D16B59942B191582000B2F92 /* UserValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16B59932B191582000B2F92 /* UserValues.swift */; };
+		D16B59942B191582000B2F92 /* BuildEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16B59932B191582000B2F92 /* BuildEnvironment.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BE8BCDB52C25D134002B3DCD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BE9F8EAE2BFE53F000A0FF5D /* CashierModeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CashierModeViewController.swift; sourceTree = "<group>"; };
 		BE9F8EB02BFE552800A0FF5D /* CashierModeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CashierModeViewController.xib; sourceTree = "<group>"; };
 		D11B7B892B07F51A009070FB /* iGamingDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iGamingDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -33,7 +33,6 @@
 		D11B7B902B07F51C009070FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D11B7B932B07F51C009070FB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D11B7B9A2B07FA91009070FB /* OperatorServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperatorServer.swift; sourceTree = "<group>"; };
-		D11B7B9B2B07FA91009070FB /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D11B7B9C2B07FA91009070FB /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D11B7B9D2B07FA91009070FB /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		D13D2F3F2B222C8A00085A8B /* BuildEnvironmentVariables.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BuildEnvironmentVariables.plist; sourceTree = "<group>"; };
@@ -41,7 +40,7 @@
 		D13E3E672B7BEC3900A554AD /* ExistingUserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExistingUserInfoView.swift; sourceTree = "<group>"; };
 		D15DA1162B62EC8200A9A618 /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
 		D16B59922B190E37000B2F92 /* iGamingDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iGamingDemo.entitlements; sourceTree = "<group>"; };
-		D16B59932B191582000B2F92 /* UserValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserValues.swift; sourceTree = "<group>"; };
+		D16B59932B191582000B2F92 /* BuildEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildEnvironment.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +74,7 @@
 		D11B7B8B2B07F51A009070FB /* iGamingDemo */ = {
 			isa = PBXGroup;
 			children = (
+				BE8BCDB52C25D134002B3DCD /* Info.plist */,
 				D13D2F412B222CA800085A8B /* appcenter-pre-build.sh */,
 				D13D2F3F2B222C8A00085A8B /* BuildEnvironmentVariables.plist */,
 				D16B59922B190E37000B2F92 /* iGamingDemo.entitlements */,
@@ -83,10 +83,9 @@
 				D15DA1162B62EC8200A9A618 /* UserInfoView.swift */,
 				D11B7B9C2B07FA91009070FB /* ViewController.swift */,
 				BE9F8EAE2BFE53F000A0FF5D /* CashierModeViewController.swift */,
-				D16B59932B191582000B2F92 /* UserValues.swift */,
+				D16B59932B191582000B2F92 /* BuildEnvironment.swift */,
 				D11B7B9A2B07FA91009070FB /* OperatorServer.swift */,
 				D11B7B9D2B07FA91009070FB /* Models.swift */,
-				D11B7B9B2B07FA91009070FB /* Extensions.swift */,
 				D11B7B8C2B07F51A009070FB /* iGamingDemoApp.swift */,
 				D11B7B902B07F51C009070FB /* Assets.xcassets */,
 				D11B7B922B07F51C009070FB /* Preview Content */,
@@ -208,11 +207,10 @@
 				D13E3E682B7BEC3900A554AD /* ExistingUserInfoView.swift in Sources */,
 				D11B7B9E2B07FA91009070FB /* OperatorServer.swift in Sources */,
 				D15DA1172B62EC8200A9A618 /* UserInfoView.swift in Sources */,
-				D16B59942B191582000B2F92 /* UserValues.swift in Sources */,
+				D16B59942B191582000B2F92 /* BuildEnvironment.swift in Sources */,
 				D11B7BA12B07FA91009070FB /* Models.swift in Sources */,
 				BE9F8EAF2BFE53F000A0FF5D /* CashierModeViewController.swift in Sources */,
 				D11B7B8D2B07F51A009070FB /* iGamingDemoApp.swift in Sources */,
-				D11B7B9F2B07FA91009070FB /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,12 +343,13 @@
 				CODE_SIGN_ENTITLEMENTS = iGamingDemo/iGamingDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"iGamingDemo/Preview Content\"";
 				DEVELOPMENT_TEAM = BW4X72F22B;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iGamingDemo/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "ID Verification";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -361,7 +360,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pavilionpay.iGamingDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -379,12 +378,13 @@
 				CODE_SIGN_ENTITLEMENTS = iGamingDemo/iGamingDemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"iGamingDemo/Preview Content\"";
 				DEVELOPMENT_TEAM = BW4X72F22B;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iGamingDemo/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "ID Verification";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -395,7 +395,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pavilionpay.iGamingDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
