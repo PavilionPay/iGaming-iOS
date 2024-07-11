@@ -23,4 +23,9 @@ extension WKScriptMessage {
         return (body as? String) == "close"
     }
     
+    var isRequestFullscreenPlaid: Bool {
+        guard name == "NativeBridge" else { return false }
+        return (body as? String) == "opensdk"
+    }
+    
 }

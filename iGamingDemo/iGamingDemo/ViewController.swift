@@ -8,6 +8,7 @@
 import UIKit
 import iGamingKit
 import LinkKit // optional; required for presentation configuration
+import SwiftUI
 
 
 /// Demonstrates how to integrate and use the iGaming SDK.
@@ -25,7 +26,7 @@ class ViewController: UIViewController {
     /// If the `initializePatronSession(forPatronType:transactionType:transactionAmount:)` method returns `nil`, the method will trigger a fatal error, indicating that the Pavilion SDK could not be initialized.
     ///
     /// - Note: The `createPavilionConfiguration(with:)` method can be used to create a full configuration for the `PavilionWebViewController`, but in this case, a simple configuration is created using only the returned URL.
-    @objc private func openButtonPressed() {
+    @objc private func launchWebSDK(forceFullView: Bool = false) {
         showIndicator()
         
         Task {
@@ -43,23 +44,40 @@ class ViewController: UIViewController {
             //      and then initializes an iGaming session using the provided
             //      patron and transaction information.
             //      Returns the SDK web component url after the session has been initialized.
-            guard let url = await OperatorServer.initializePatronSession(forPatronType: patronType, transactionType: transactionType, transactionAmount: transactionAmount) else {
-                fatalError("Unable to initialize Pavilion SDK")
+            do {
+                let isFullScreenMode = forceFullView || !cashierMode
+                let url = try await OperatorServer.initializePatronSession(forPatronType: patronType,
+                                                                           transactionType: transactionType,
+                                                                           transactionAmount: transactionAmount,
+                                                                           productType: productType,
+                                                                           cashierMode: !isFullScreenMode)
+                hideIndicator()
+                if isFullScreenMode {
+                    // MARK: Create a PavilionWebViewController instance and present it
+                    let vc = PavilionWebViewController()
+                    
+                    /// If you are displaying the VIP SDK in an existing webview with custom or shared logic, look at the InjectIntoWebviewController
+                    /// for an example of how to setup your existing webview to handle the VIP SDK
+                    //let vc = InjectIntoWebviewController()
+                    
+                    vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
+                    pavilionViewController = vc
+                    show(vc, sender: self)
+                } else {
+                    let vc = CashierModeViewController(nibName: "CashierModeViewController", bundle: nil)
+                    vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
+                    pavilionViewController = vc
+                    show(vc, sender: self)
+                }
+                
+            } catch {
+                let alert = UIAlertController(title: "Error Initializing Sesion", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                    alert.dismiss(animated: true)
+                }))
+                hideIndicator()
+                present(alert, animated: true)
             }
-            
-            // MARK: Create PavilionWebViewControllerConfiguration
-            // Simplest case of creating configuration
-            let configuration = PavilionWebViewConfiguration(url: url)
-            
-            // MARK: Create a PavilionWebViewController instance and present it
-            let vc = PavilionWebViewController()
-            pavilionViewController = vc
-            show(vc, sender: self)
-            vc.loadViewIfNeeded()
-            
-            // MARK: Launch
-            // Load the iGaming SDK with Pavilion and Plaid configuration options
-            vc.loadPavilionSDK(with: configuration)
         }
         
     }
@@ -75,35 +93,32 @@ class ViewController: UIViewController {
     /// - A completion handler for when the `PavilionWebViewController` finishes its work. This handler pops the controller from the navigation stack.
     ///
     /// This method demonstrates how to create a full configuration for the `PavilionWebViewController`, including how to handle various events and callbacks.
-    private func createPavilionConfiguration(with url: URL) -> PavilionWebViewConfiguration {
-        let nav = navigationController
-        
-        let presentationMethod = PresentationMethod.custom({ vc in
-            vc.view.backgroundColor = .systemBackground
-            nav?.pushViewController(vc, animated: true)
-        }, { vc in
-            nav?.popViewController(animated: true)
-        })
-        let success: LinkKit.OnSuccessHandler = { success in
-            print("Link Success public-token: \(success.publicToken) metadata: \(success.metadata)")
-        }
-        let event: LinkKit.OnEventHandler = { event in
-            print("Link Event: \(event)")
-        }
-        let exit: LinkKit.OnExitHandler = { exit in
-            print("Link Exit with\n\t error: \(exit.error?.localizedDescription ?? "nil")\n\t metadata: \(exit.metadata)")
-        }
-        let didComplete = { (webView: PavilionWebViewController) -> Void in
-            webView.navigationController?.popViewController(animated: true)
+    private func createPavilionConfiguration(with url: URL, viewController: UIViewController) -> PavilionWebViewConfiguration {
+
+        let didComplete = { () -> Void in
+            viewController.navigationController?.popViewController(animated: true)
         }
         
         let configuration = PavilionWebViewConfiguration(
             url: url,
-            linkPresentationMethod: presentationMethod,
-            linkSuccess: success,
-            linkEvent: event,
-            linkExit: exit,
-            pavilionWebViewDidComplete: didComplete
+            presentingViewController: self,
+            pavilionWebViewDidComplete: didComplete,
+            fullScreenRequested: { 
+                didComplete()
+                let vc = PavilionWebViewController()
+                vc.pavilionConfig = self.createPavilionConfiguration(with: OperatorServer.createPatronSessionUrl(transactionType: self.transactionType), viewController: vc)
+                self.pavilionViewController = vc
+                self.show(vc, sender: self)
+            },
+            linkSuccess: { success in
+                print("Link Success public-token: \(success.publicToken) metadata: \(success.metadata)")
+            },
+            linkEvent: { event in
+                print("Link Event: \(event)")
+            },
+            linkExit: { exit in
+                print("Link Exit with\n\t error: \(exit.error?.localizedDescription ?? "nil")\n\t metadata: \(exit.metadata)")
+            }
         )
         return configuration
     }
@@ -113,27 +128,37 @@ class ViewController: UIViewController {
     private let welcomeLabel = UILabel()
     private let titleLabel = UILabel()
     private let openButton = UIButton()
+    private let editUserButton = UIButton()
+    private let editOperatorButton = UIButton()
     
     private let inputStack = UIStackView()
     private let transactionLabel = UILabel()
+    
     private let transactionTypeLabel = UILabel()
     private let transactionTypeControl = UISegmentedControl(items: ["Deposit", "Withdraw"])
-    private let patronTypeLabel = UILabel()
-    private let patronTypeControl = UISegmentedControl(items: ["New", "Existing"])
     private let amountLabel = UILabel()
     private let amountInput = UITextField()
+    private let patronTypeLabel = UILabel()
+    private let patronTypeControl = UISegmentedControl(items: ["New", "Existing"])
+    private let sessionTypeLabel = UILabel()
+    private let sessionTypeControl = UISegmentedControl(items: ["Preferred", "Online"])
+    private let cashierModeLabel = UILabel()
+    private let cashierModeControl = UISegmentedControl(items: ["No", "Yes"])
+    
     private let spacerView = UIView()
     
     private let niceBlue = UIColor(red: 0.039, green: 0.522, blue: 0.918, alpha: 1.0)
     private let numberFormatter = NumberFormatter()
     private let activityIndicator = UIActivityIndicatorView(style: .medium)
-
+    
     
     // Pavilion Web View
-    private var pavilionViewController: PavilionWebViewController?
+    private var pavilionViewController: UIViewController?
     private var transactionType = "deposit"
     private var transactionAmount = "13.50"
     private var patronType = "existing"
+    private var productType = "preferred"
+    private var cashierMode = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -147,10 +172,6 @@ class ViewController: UIViewController {
         super.viewDidAppear(animated)
         hideIndicator()
     }
-}
-
-
-extension ViewController: UITextFieldDelegate {
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
@@ -193,7 +214,7 @@ extension ViewController: UITextFieldDelegate {
     
     private func setupButton() {
         openButton.backgroundColor = niceBlue
-        openButton.addTarget(self, action: #selector(openButtonPressed), for: .touchUpInside)
+        openButton.addTarget(self, action: #selector(launchWebSDK), for: .touchUpInside)
         openButton.layer.cornerRadius = 8
         openButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
         openButton.setTitle("Launch Pavilion Session", for: .normal)
@@ -241,16 +262,7 @@ extension ViewController: UITextFieldDelegate {
         
         transactionTypeControl.selectedSegmentIndex = 0
         transactionTypeControl.translatesAutoresizingMaskIntoConstraints = false
-        transactionTypeControl.addTarget(self, action: #selector(transactionTypeChanged), for: .valueChanged)
-        
-        patronTypeLabel.text = "USER"
-        patronTypeLabel.textColor = niceBlue
-        patronTypeLabel.textAlignment = .right
-        patronTypeLabel.font = .boldSystemFont(ofSize: 12)
-        
-        patronTypeControl.selectedSegmentIndex = 1
-        patronTypeControl.translatesAutoresizingMaskIntoConstraints = false
-        patronTypeControl.addTarget(self, action: #selector(transactionTypeChanged), for: .valueChanged)
+        transactionTypeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
         
         amountLabel.text = "AMOUNT"
         amountLabel.textColor = niceBlue
@@ -264,21 +276,50 @@ extension ViewController: UITextFieldDelegate {
         amountInput.delegate = self
         amountInput.translatesAutoresizingMaskIntoConstraints = false
         
-        let patronStack = UIStackView(arrangedSubviews: [patronTypeLabel, patronTypeControl])
-        let typeStack = UIStackView(arrangedSubviews: [transactionTypeLabel, transactionTypeControl])
-        let amountStack = UIStackView(arrangedSubviews: [amountLabel, amountInput])
-        patronStack.spacing = 8
-        typeStack.spacing = 8
-        amountStack.spacing = 8
+        patronTypeLabel.text = "USER"
+        patronTypeLabel.textColor = niceBlue
+        patronTypeLabel.textAlignment = .right
+        patronTypeLabel.font = .boldSystemFont(ofSize: 12)
+        
+        patronTypeControl.selectedSegmentIndex = 1
+        patronTypeControl.translatesAutoresizingMaskIntoConstraints = false
+        patronTypeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+        
+        sessionTypeLabel.text = "PRODUCT"
+        sessionTypeLabel.textColor = niceBlue
+        sessionTypeLabel.textAlignment = .right
+        sessionTypeLabel.font = .boldSystemFont(ofSize: 12)
+        
+        sessionTypeControl.selectedSegmentIndex = 0
+        sessionTypeControl.translatesAutoresizingMaskIntoConstraints = false
+        sessionTypeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+        
+        cashierModeLabel.text = "CASHIER MODE"
+        cashierModeLabel.textColor = niceBlue
+        cashierModeLabel.textAlignment = .right
+        cashierModeLabel.font = .boldSystemFont(ofSize: 12)
+        
+        cashierModeControl.selectedSegmentIndex = 0
+        cashierModeControl.translatesAutoresizingMaskIntoConstraints = false
+        cashierModeControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
         
         inputStack.axis = .vertical
         inputStack.spacing = 8
         inputStack.distribution = .fill
         inputStack.addArrangedSubview(transactionLabel)
         
-        inputStack.addArrangedSubview(typeStack)
-        inputStack.addArrangedSubview(amountStack)
-        inputStack.addArrangedSubview(patronStack)
+        let stackViews = [
+            UIStackView(arrangedSubviews: [patronTypeLabel, patronTypeControl]),
+            UIStackView(arrangedSubviews: [amountLabel, amountInput]),
+            UIStackView(arrangedSubviews: [transactionTypeLabel, transactionTypeControl]),
+            UIStackView(arrangedSubviews: [sessionTypeLabel, sessionTypeControl]),
+            UIStackView(arrangedSubviews: [cashierModeLabel, cashierModeControl]),
+        ]
+        
+        stackViews.forEach {
+            $0.spacing = 8
+            inputStack.addArrangedSubview($0)
+        }
         
         spacerView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -289,10 +330,83 @@ extension ViewController: UITextFieldDelegate {
             spacerView.heightAnchor.constraint(equalToConstant: 40),
             amountLabel.widthAnchor.constraint(equalToConstant: 60),
             patronTypeLabel.widthAnchor.constraint(equalToConstant: 60),
-            transactionTypeLabel.widthAnchor.constraint(equalToConstant: 60)
+            transactionTypeLabel.widthAnchor.constraint(equalToConstant: 60),
+            sessionTypeLabel.widthAnchor.constraint(equalToConstant: 60),
+            cashierModeLabel.widthAnchor.constraint(equalToConstant: 100)
         ])
+        
+        editUserButton.setTitle("Edit User Info", for: .normal)
+        editUserButton.setTitleColor(niceBlue, for: .normal)
+        editUserButton.addTarget(self, action: #selector(editUserButtonPressed), for: .touchUpInside)
+        
+        let editButtonSpacer = UIView()
+        editButtonSpacer.translatesAutoresizingMaskIntoConstraints = false
+        editButtonSpacer.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        editOperatorButton.setTitle("Enter Operator Token", for: .normal)
+        editOperatorButton.setTitleColor(niceBlue, for: .normal)
+        editOperatorButton.addTarget(self, action: #selector(editOperatorButtonPressed), for: .touchUpInside)
+        
+        let editOperatorSpacer = UIView()
+        editOperatorSpacer.translatesAutoresizingMaskIntoConstraints = false
+        editOperatorSpacer.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        vStack.addArrangedSubview(editButtonSpacer)
+        vStack.addArrangedSubview(editUserButton)
+        vStack.addArrangedSubview(editOperatorSpacer)
+        vStack.addArrangedSubview(editOperatorButton)
     }
     
+    @objc func segmentedControlChanged(_ sender: UISegmentedControl) {
+        if sender == transactionTypeControl {
+            transactionType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? transactionType).lowercased()
+        }
+        if sender == patronTypeControl {
+            patronType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? patronType).lowercased()
+            let isNewPatron = patronType == "new"
+            if isNewPatron {
+                transactionType = "deposit"
+                transactionTypeControl.selectedSegmentIndex = 0
+            }
+            transactionTypeControl.isEnabled = !isNewPatron
+        }
+        if sender == sessionTypeControl {
+            productType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? productType).lowercased()
+        }
+        if sender == cashierModeControl {
+            cashierMode = cashierModeControl.selectedSegmentIndex == 1
+        }
+    }
+    
+    @objc func editUserButtonPressed() {
+        if patronType == "new" {
+            present(UIHostingController(rootView: UserInfoView()), animated: true)
+        } else {
+            present(UIHostingController(rootView: ExistingUserInfoView()), animated: true)
+        }
+        //        navigationController?.pushViewController(UIHostingController(rootView: UserInfoView()), animated: true)
+    }
+    
+    @objc func editOperatorButtonPressed() {
+        let alert = UIAlertController(title: "Alert", message: "Message", preferredStyle: UIAlertController.Style.alert)
+        alert.title = "Enter Operator token"
+        alert.message = ""
+        alert.addAction(UIAlertAction(title: "Save", style: UIAlertAction.Style.default, handler: { action in
+            if let text = alert.textFields?[0].text, !text.isEmpty {
+                OperatorServer.externalToken = text
+            } else {
+                OperatorServer.externalToken = nil
+            }
+        }))
+        alert.addTextField(configurationHandler: {(textField: UITextField!) in
+            textField.placeholder = "Enter operator token"
+            textField.text = OperatorServer.externalToken
+        })
+        self.present(alert, animated: true, completion: nil)
+    }
+}
+
+extension ViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -313,14 +427,5 @@ extension ViewController: UITextFieldDelegate {
         let number = numberFormatter.number(from: updatedText)
         transactionAmount = number?.stringValue ?? "13.50"
         return number != nil
-    }
-    
-    @objc func transactionTypeChanged(_ sender: UISegmentedControl) {
-        if sender == transactionTypeControl {
-            transactionType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? "").lowercased()
-        }
-        if sender == patronTypeControl {
-            patronType = (sender.titleForSegment(at: sender.selectedSegmentIndex) ?? "").lowercased()
-        }
     }
 }

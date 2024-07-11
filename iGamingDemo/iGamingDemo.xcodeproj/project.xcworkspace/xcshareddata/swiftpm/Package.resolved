@@ -1,23 +1,15 @@
 {
+  "originHash" : "c0341d434e7350f2afe06ffcbd403770596937cd4a122e7901eb4264c8adf474",
   "pins" : [
-    {
-      "identity" : "igaming-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PavilionPay/iGaming-iOS",
-      "state" : {
-        "revision" : "85e50c2e04846df77f1b1a12bcba44a0551f70b2",
-        "version" : "0.2.0"
-      }
-    },
     {
       "identity" : "plaid-link-ios",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/plaid/plaid-link-ios",
       "state" : {
-        "revision" : "c675e4b4cd8c72d2c1f2cffdef6c81b0574d365c",
-        "version" : "4.7.0"
+        "revision" : "e21d859047fc75b69334d106a86df131efd79a9a",
+        "version" : "4.7.7"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
