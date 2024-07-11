@@ -20,7 +20,17 @@ class OperatorServer {
     
     /// A closure that returns an external token.
     static var getExternalToken: (() -> String)? = nil
+    
+    static var newUserSessionRequest: NewUserSessionRequest {
+        get { NewUserSessionRequest.readFromUserDefaults() ?? .exampleUser }
+        set { newValue.saveToUserDefaults() }
+    }
         
+    static var existingUserSessionRequest: ExistingUserSessionRequest {
+        get { ExistingUserSessionRequest.readFromUserDefaults() ?? .exampleUser }
+        set { newValue.saveToUserDefaults() }
+    }
+    
     /// Initializes a patron session for a given patron type, transaction type, and transaction amount.
     ///
     /// - Parameters:
@@ -29,10 +39,15 @@ class OperatorServer {
     ///   - transactionAmount: The amount of the transaction.
     ///
     /// - Returns: A URL for the patron session, or `nil` if an error occurs.
-    static func initializePatronSession(forPatronType patronType: String, transactionType: String, transactionAmount: String) async -> URL? {
+    static func initializePatronSession(forPatronType patronType: String,
+                                        transactionType: String,
+                                        transactionAmount: String,
+                                        productType: String,
+                                        cashierMode: Bool) async throws -> URL? {
+        let product = productType == "preferred" ? "0" : "1"
         let patronData = patronType == "new"
-        ? OperatorServer.newPatronTransactionData(withAmount: transactionAmount)
-        : OperatorServer.patronTransactionData(withAmount: transactionAmount, type: transactionType)
+        ? OperatorServer.newPatronTransactionData(withAmount: transactionAmount, productType: product)
+        : OperatorServer.patronTransactionData(withAmount: transactionAmount, type: transactionType, productType: product)
         
         let url = URL(string: "\(UserValues.sdkBaseUri)/api/patronsession/\(patronType)")!
         var request = URLRequest(url: url)
@@ -46,18 +61,14 @@ class OperatorServer {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         print(request.allHTTPHeaderFields!)
         
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            data.printJson()
-            let patron = try JSONDecoder().decode(PatronResponse.self, from: data)
-            print(response)
-            let url = URL(string: "\(UserValues.sdkBaseUri)?mode=\(transactionType)&native=true&redirectUrl=\(UserValues.redirectUri)#\(patron.sessionId)")
-            return url
-        } catch {
-            print(error)
-        }
-        
-        return nil
+        let (data, response) = try await URLSession.shared.data(for: request)
+        print(String(data: data, encoding: .utf8) ?? "nil")
+        data.printJson()
+        let patron = try JSONDecoder().decode(PatronResponse.self, from: data)
+        print(response)
+        let result = URL(string: "\(UserValues.sdkBaseUri)?mode=\(transactionType)&native=true\(cashierMode ? "&view=cashier" : "")&redirectUrl=\(UserValues.redirectUri)#\(patron.sessionId)")
+        print(result!.absoluteString)
+        return result
     }
     
 }
@@ -73,32 +84,32 @@ extension OperatorServer {
     /// - Parameter amount: The amount of the transaction.
     ///
     /// - Returns: A `Data` object containing the encoded patron data.
-    static func newPatronTransactionData(withAmount amount: String) -> Data {
+    static func newPatronTransactionData(withAmount amount: String, productType: String) -> Data {
         try! JSONEncoder().encode(
             NewUserSessionRequest(
                 patronId: UUID().uuidString,
-                firstName: "Jane",
-                middleInitial: "",
-                lastName: "Public",
-                dateOfBirth: "01/22/1981",
-                email: "Jane@Jane.com",
-                mobilePhone: "3023492104",
-                streetName: "1301 E Main ST",
-                city: "Carbondale",
-                state: "IL",
-                zip: "62901",
-                country: "USA",
-                idType: "DL",
-                idNumber: "7774213035",
-                idState: "IL",
-                routingNumber: "",
-                accountNumber: "",
-                walletBalance: "1000",
-                remainingDailyDeposit: "1000",
+                firstName: newUserSessionRequest.firstName,
+                middleInitial: newUserSessionRequest.middleInitial,
+                lastName: newUserSessionRequest.lastName,
+                dateOfBirth: newUserSessionRequest.dateOfBirth,
+                email: newUserSessionRequest.email,
+                mobilePhone: newUserSessionRequest.mobilePhone,
+                streetName: newUserSessionRequest.streetName,
+                city: newUserSessionRequest.city,
+                state: newUserSessionRequest.state,
+                zip: newUserSessionRequest.zip,
+                country: newUserSessionRequest.country,
+                idType: newUserSessionRequest.idType,
+                idNumber: newUserSessionRequest.idNumber,
+                idState: newUserSessionRequest.idState,
+                routingNumber: newUserSessionRequest.routingNumber,
+                accountNumber: newUserSessionRequest.accountNumber,
+                walletBalance: newUserSessionRequest.walletBalance,
+                remainingDailyDeposit: newUserSessionRequest.remainingDailyDeposit,
                 transactionId: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),
                 transactionAmount: Double(amount)!,
                 returnURL: UserValues.redirectUri,
-                productType: "preferred"
+                productType: productType
             )
         )
     }
@@ -110,19 +121,19 @@ extension OperatorServer {
     ///   - type: The type of the transaction.
     ///
     /// - Returns: A `Data` object containing the encoded patron data.
-    static func patronTransactionData(withAmount amount: String, type: String) -> Data {
+    static func patronTransactionData(withAmount amount: String, type: String, productType: String) -> Data {
         try! JSONEncoder().encode(
             ExistingUserSessionRequest(
-                patronID: "cb7c887d-6687-4aa5-a664-31cf6c810df7",
-                vipCardNumber: "7210645917",
-                dateOfBirth: "5/28/1974",
+                patronID: existingUserSessionRequest.patronID,
+                vipCardNumber: existingUserSessionRequest.vipCardNumber,
+                dateOfBirth: existingUserSessionRequest.dateOfBirth,
                 remainingDailyDeposit: 999.99,
                 walletBalance: 1000,
                 transactionID: String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(24)),
                 transactionAmount: Double(amount)!,
                 transactionType: type == "deposit" ? 0 : 1,
                 returnURL: UserValues.redirectUri,
-                productType: "preferred"
+                productType: productType
             )
         )
     }

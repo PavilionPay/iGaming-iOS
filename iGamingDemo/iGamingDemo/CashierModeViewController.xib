@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CashierModeViewController" customModule="iGamingDemo" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="cMh-wj-o2Y" id="NE8-qX-Wgb"/>
+                <outlet property="webView" destination="scf-bu-uCJ" id="fUU-aH-1si"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="cMh-wj-o2Y">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="scf-bu-uCJ" customClass="PavilionWebView" customModule="iGamingKit">
+                    <rect key="frame" x="20" y="362" width="353" height="444"/>
+                    <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <wkWebViewConfiguration key="configuration">
+                        <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                        <wkPreferences key="preferences"/>
+                    </wkWebViewConfiguration>
+                </wkWebView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Example of how the SDK would look in the condensed Cashier Page format" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DHS-Mo-HWZ">
+                    <rect key="frame" x="50" y="168" width="293" height="40.666666666666657"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cashier Mode View" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uHp-jp-f0f">
+                    <rect key="frame" x="63" y="121" width="267" height="39"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VRG-Fs-txK">
+                    <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                    <items>
+                        <navigationItem title="Cashier Mode" id="XNc-Vp-cIn">
+                            <barButtonItem key="backBarButtonItem" title="Back" id="m22-QQ-yvi"/>
+                            <barButtonItem key="rightBarButtonItem" systemItem="done" id="VRx-yh-aVc">
+                                <connections>
+                                    <action selector="dismiss" destination="-1" id="lRa-Wk-8oS"/>
+                                </connections>
+                            </barButtonItem>
+                        </navigationItem>
+                    </items>
+                </navigationBar>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="zRA-pf-23b"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="VRG-Fs-txK" firstAttribute="leading" secondItem="zRA-pf-23b" secondAttribute="leading" id="6Na-nC-Bk6"/>
+                <constraint firstItem="zRA-pf-23b" firstAttribute="bottom" secondItem="scf-bu-uCJ" secondAttribute="bottom" constant="12" id="7Ur-Vq-GI7"/>
+                <constraint firstItem="DHS-Mo-HWZ" firstAttribute="centerX" secondItem="zRA-pf-23b" secondAttribute="centerX" id="A9a-4B-Ju4"/>
+                <constraint firstItem="uHp-jp-f0f" firstAttribute="centerX" secondItem="zRA-pf-23b" secondAttribute="centerX" id="DhQ-wa-cZg"/>
+                <constraint firstItem="DHS-Mo-HWZ" firstAttribute="top" secondItem="uHp-jp-f0f" secondAttribute="bottom" constant="8" symbolic="YES" id="EeQ-wM-mLD"/>
+                <constraint firstItem="uHp-jp-f0f" firstAttribute="top" secondItem="zRA-pf-23b" secondAttribute="top" constant="62" id="MdT-cf-xBs"/>
+                <constraint firstItem="scf-bu-uCJ" firstAttribute="centerX" secondItem="zRA-pf-23b" secondAttribute="centerX" id="a1O-jK-gn4"/>
+                <constraint firstItem="zRA-pf-23b" firstAttribute="leading" secondItem="DHS-Mo-HWZ" secondAttribute="leading" constant="-50" id="ba8-bJ-dMR"/>
+                <constraint firstItem="VRG-Fs-txK" firstAttribute="top" secondItem="zRA-pf-23b" secondAttribute="top" id="hVl-TD-5Ue"/>
+                <constraint firstItem="scf-bu-uCJ" firstAttribute="leading" secondItem="zRA-pf-23b" secondAttribute="leading" constant="20" id="my8-TG-2eY"/>
+                <constraint firstItem="scf-bu-uCJ" firstAttribute="top" secondItem="DHS-Mo-HWZ" secondAttribute="bottom" constant="153.33333333335221" id="ro1-xa-jxl"/>
+                <constraint firstItem="VRG-Fs-txK" firstAttribute="centerX" secondItem="zRA-pf-23b" secondAttribute="centerX" id="upY-LF-NFr"/>
+            </constraints>
+            <point key="canvasLocation" x="-257" y="-774"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
