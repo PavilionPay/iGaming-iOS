@@ -11,7 +11,22 @@ import SwiftUI
 struct iGamingDemoApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            DemoView()
         }
     }
+}
+
+struct DemoView: UIViewControllerRepresentable {
+    
+    func makeUIViewController(context: Context) -> UIViewController {
+        UINavigationController(rootViewController: SessionSetupViewController())
+    }
+    
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        // Empty implementation
+    }
+}
+
+#Preview {
+    DemoView()
 }

@@ -1,7 +1,8 @@
 //
 //  PavilionWebViewHandler.swift
+//  iGamingKit
 //
-//  Created by Ben Ion on 7/11/24.
+//  Created by Pavilion Payments
 //
 
 import Foundation
@@ -37,7 +38,12 @@ public final class PavilionWebViewHandler: NSObject {
 extension PavilionWebViewHandler: WKScriptMessageHandlerWithReply {
     /// Handles script messages received from the web content.
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, replyHandler: @escaping (Any?, String?) -> Void) {
-        if let token = message.linkToken {
+        guard message.name == "NativeBridge" else {
+            replyHandler(nil, nil)
+            return
+        }
+        
+        if let token = (message.body as? [String : String])?["linkToken"] {
             var linkConfiguration = LinkTokenConfiguration(token: token) { [weak self] success in
                 guard let self = self else { return }
                 self.pavilionConfig.linkSuccess?(success)
@@ -63,12 +69,12 @@ extension PavilionWebViewHandler: WKScriptMessageHandlerWithReply {
             return
         }
         
-        if message.isCloseMessage {
+        if message.body as? String == "close" {
             pavilionConfig.pavilionWebViewDidComplete()
             return
         }
         
-        if message.isRequestFullscreenPlaid {
+        if message.body as? String == "opensdk" {
             pavilionConfig.pavilionWebViewDidComplete()
             pavilionConfig.fullScreenRequested()
             return

@@ -1,8 +1,8 @@
 //
-//  File.swift
-//  
+//  PavilionWebView.swift
+//  iGamingKit
 //
-//  Created by Ben Ion on 5/22/24.
+//  Created by Pavilion Payments
 //
 
 import UIKit

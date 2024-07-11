@@ -8,8 +8,6 @@
 import UIKit
 import iGamingKit
 
-// PavilionWebViewController class
-// This class is a UIViewController that manages a WKWebView. It implements the WKScriptMessageHandlerWithReply protocol to handle messages from the web content.
 public final class CashierModeViewController: UIViewController {
     
     public var pavilionConfig: PavilionWebViewConfiguration!

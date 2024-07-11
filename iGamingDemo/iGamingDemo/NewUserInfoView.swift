@@ -1,5 +1,5 @@
 //
-//  UserInfoView.swift
+//  NewUserInfoView.swift
 //  iGamingDemo
 //
 //  Created by Wright, James on 1/25/24.
@@ -101,7 +101,7 @@ enum IdentificationType: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
-struct UserInfoView: View {
+struct NewUserInfoView: View {
     @State private var newUserData = NewUserData.init(from: OperatorServer.newUserSessionRequest)
     @State private var selectedIDType = IdentificationType.driversLicense
 
@@ -160,5 +160,5 @@ struct UserInfoView: View {
 }
 
 #Preview {
-    UserInfoView()
+    NewUserInfoView()
 }

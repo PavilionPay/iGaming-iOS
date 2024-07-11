@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SessionSetupViewController.swift
 //  iGamingKit
 //
 //  Created by Pavilion Payments
@@ -7,12 +7,10 @@
 
 import UIKit
 import iGamingKit
-import LinkKit // optional; required for presentation configuration
 import SwiftUI
 
-
 /// Demonstrates how to integrate and use the iGaming SDK.
-class ViewController: UIViewController {
+class SessionSetupViewController: UIViewController {
     
     /// This method is triggered when the open button is pressed.
     ///
@@ -380,11 +378,10 @@ class ViewController: UIViewController {
     
     @objc func editUserButtonPressed() {
         if patronType == "new" {
-            present(UIHostingController(rootView: UserInfoView()), animated: true)
+            present(UIHostingController(rootView: NewUserInfoView()), animated: true)
         } else {
             present(UIHostingController(rootView: ExistingUserInfoView()), animated: true)
         }
-        //        navigationController?.pushViewController(UIHostingController(rootView: UserInfoView()), animated: true)
     }
     
     @objc func editOperatorButtonPressed() {
@@ -406,7 +403,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController: UITextFieldDelegate {
+extension SessionSetupViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
