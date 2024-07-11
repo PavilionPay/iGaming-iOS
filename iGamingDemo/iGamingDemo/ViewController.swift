@@ -55,6 +55,11 @@ class ViewController: UIViewController {
                 if isFullScreenMode {
                     // MARK: Create a PavilionWebViewController instance and present it
                     let vc = PavilionWebViewController()
+                    
+                    /// If you are displaying the VIP SDK in an existing webview with custom or shared logic, look at the InjectIntoWebviewController
+                    /// for an example of how to setup your existing webview to handle the VIP SDK
+                    //let vc = InjectIntoWebviewController()
+                    
                     vc.pavilionConfig = createPavilionConfiguration(with: url!, viewController: vc)
                     pavilionViewController = vc
                     show(vc, sender: self)
@@ -89,41 +94,31 @@ class ViewController: UIViewController {
     ///
     /// This method demonstrates how to create a full configuration for the `PavilionWebViewController`, including how to handle various events and callbacks.
     private func createPavilionConfiguration(with url: URL, viewController: UIViewController) -> PavilionWebViewConfiguration {
-        let nav = navigationController
-        
-        let presentationMethod = PresentationMethod.custom({ vc in
-            vc.view.backgroundColor = .systemBackground
-            nav?.pushViewController(vc, animated: true)
-        }, { vc in
-            nav?.popViewController(animated: true)
-        })
-        let success: LinkKit.OnSuccessHandler = { success in
-            print("Link Success public-token: \(success.publicToken) metadata: \(success.metadata)")
-        }
-        let event: LinkKit.OnEventHandler = { event in
-            print("Link Event: \(event)")
-        }
-        let exit: LinkKit.OnExitHandler = { exit in
-            print("Link Exit with\n\t error: \(exit.error?.localizedDescription ?? "nil")\n\t metadata: \(exit.metadata)")
-        }
+
         let didComplete = { () -> Void in
             viewController.navigationController?.popViewController(animated: true)
         }
         
         let configuration = PavilionWebViewConfiguration(
             url: url,
-            linkPresentationMethod: presentationMethod,
+            presentingViewController: self,
             pavilionWebViewDidComplete: didComplete,
-            fullScreenRequsted: { 
+            fullScreenRequested: { 
                 didComplete()
                 let vc = PavilionWebViewController()
                 vc.pavilionConfig = self.createPavilionConfiguration(with: OperatorServer.createPatronSessionUrl(transactionType: self.transactionType), viewController: vc)
                 self.pavilionViewController = vc
                 self.show(vc, sender: self)
             },
-            linkSuccess: success,
-            linkEvent: event,
-            linkExit: exit
+            linkSuccess: { success in
+                print("Link Success public-token: \(success.publicToken) metadata: \(success.metadata)")
+            },
+            linkEvent: { event in
+                print("Link Event: \(event)")
+            },
+            linkExit: { exit in
+                print("Link Exit with\n\t error: \(exit.error?.localizedDescription ?? "nil")\n\t metadata: \(exit.metadata)")
+            }
         )
         return configuration
     }

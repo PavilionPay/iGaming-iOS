@@ -32,16 +32,16 @@ public struct PavilionWebViewConfiguration {
     public let linkExit: LinkKit.OnExitHandler?
     
     public init(url: URL, 
-                linkPresentationMethod: PresentationMethod,
+                presentingViewController: UIViewController,
                 pavilionWebViewDidComplete: @escaping () -> Void,
-                fullScreenRequsted: @escaping () -> Void,
+                fullScreenRequested: @escaping () -> Void,
                 linkSuccess: LinkKit.OnSuccessHandler? = nil,
                 linkEvent: LinkKit.OnEventHandler? = nil,
                 linkExit: LinkKit.OnExitHandler? = nil) {
         self.url = url
-        self.linkPresentationMethod = linkPresentationMethod
+        self.linkPresentationMethod = PresentationMethod.viewController(presentingViewController)
         self.pavilionWebViewDidComplete = pavilionWebViewDidComplete
-        self.fullScreenRequested = fullScreenRequsted
+        self.fullScreenRequested = fullScreenRequested
         self.linkSuccess = linkSuccess
         self.linkEvent = linkEvent
         self.linkExit = linkExit

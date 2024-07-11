@@ -10,6 +10,7 @@
 		BE9F8EAD2BFE44A400A0FF5D /* iGamingKit in Frameworks */ = {isa = PBXBuildFile; productRef = BE9F8EAC2BFE44A400A0FF5D /* iGamingKit */; };
 		BE9F8EAF2BFE53F000A0FF5D /* CashierModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9F8EAE2BFE53F000A0FF5D /* CashierModeViewController.swift */; };
 		BE9F8EB12BFE552800A0FF5D /* CashierModeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE9F8EB02BFE552800A0FF5D /* CashierModeViewController.xib */; };
+		BEBDB04F2C4031290006AD14 /* InjectIntoWebviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBDB04E2C4031290006AD14 /* InjectIntoWebviewController.swift */; };
 		D11B7B8D2B07F51A009070FB /* iGamingDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B8C2B07F51A009070FB /* iGamingDemoApp.swift */; };
 		D11B7B8F2B07F51A009070FB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11B7B8E2B07F51A009070FB /* ContentView.swift */; };
 		D11B7B912B07F51C009070FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D11B7B902B07F51C009070FB /* Assets.xcassets */; };
@@ -27,6 +28,7 @@
 		BE8BCDB52C25D134002B3DCD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BE9F8EAE2BFE53F000A0FF5D /* CashierModeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CashierModeViewController.swift; sourceTree = "<group>"; };
 		BE9F8EB02BFE552800A0FF5D /* CashierModeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CashierModeViewController.xib; sourceTree = "<group>"; };
+		BEBDB04E2C4031290006AD14 /* InjectIntoWebviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectIntoWebviewController.swift; sourceTree = "<group>"; };
 		D11B7B892B07F51A009070FB /* iGamingDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iGamingDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D11B7B8C2B07F51A009070FB /* iGamingDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iGamingDemoApp.swift; sourceTree = "<group>"; };
 		D11B7B8E2B07F51A009070FB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				D13E3E672B7BEC3900A554AD /* ExistingUserInfoView.swift */,
 				D15DA1162B62EC8200A9A618 /* UserInfoView.swift */,
 				D11B7B9C2B07FA91009070FB /* ViewController.swift */,
+				BEBDB04E2C4031290006AD14 /* InjectIntoWebviewController.swift */,
 				BE9F8EAE2BFE53F000A0FF5D /* CashierModeViewController.swift */,
 				D16B59932B191582000B2F92 /* BuildEnvironment.swift */,
 				D11B7B9A2B07FA91009070FB /* OperatorServer.swift */,
@@ -210,6 +213,7 @@
 				D16B59942B191582000B2F92 /* BuildEnvironment.swift in Sources */,
 				D11B7BA12B07FA91009070FB /* Models.swift in Sources */,
 				BE9F8EAF2BFE53F000A0FF5D /* CashierModeViewController.swift in Sources */,
+				BEBDB04F2C4031290006AD14 /* InjectIntoWebviewController.swift in Sources */,
 				D11B7B8D2B07F51A009070FB /* iGamingDemoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
