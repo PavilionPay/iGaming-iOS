@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/plaid/plaid-link-ios", from: "4.7.0"),
+        .package(url: "https://github.com/plaid/plaid-link-ios", from: "5.6.0"),
     ],
     targets: [
         .target(
