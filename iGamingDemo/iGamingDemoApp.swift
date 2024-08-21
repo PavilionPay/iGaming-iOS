@@ -19,11 +19,11 @@ struct iGamingDemoApp: App {
 struct DemoView: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> UIViewController {
-        UINavigationController(rootViewController: SessionSetupViewController())
+        UINavigationController(rootViewController: SessionSetupViewController(nibName: "SessionSetupViewController", bundle: Bundle.main))
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        // Empty implementation
+
     }
 }
 
