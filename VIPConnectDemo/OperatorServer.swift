@@ -1,6 +1,5 @@
 //
 //  OperatorServer.swift
-//  iGamingKit
 //
 //  Created by Pavilion Payments
 //
@@ -50,6 +49,10 @@ class OperatorServer {
     ///
     /// - Returns: A URL for the patron session, or `nil` if an error occurs.
     static func getPatronSession(transactionType: String) async throws -> String {
+        
+        if BuildEnvironment.shared.Environment.isEmpty {
+            throw SessionCreationError.badToken("Build Environment variables not set; please update them with values for your operator provided by Pavilion.")
+        }
         
         let patronData = OperatorServer.patronTransactionData(withAmount: "10.0", type: transactionType, productType: "0")
         

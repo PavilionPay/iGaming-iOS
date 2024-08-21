@@ -1,6 +1,5 @@
 //
-//  iGamingDemoApp.swift
-//  iGamingKit
+//  VIPConnectDemoApp.swift
 //
 //  Created by Pavilion Payments
 //
@@ -8,7 +7,7 @@
 import SwiftUI
 
 @main
-struct iGamingDemoApp: App {
+struct VIPConnectDemoApp: App {
     var body: some Scene {
         WindowGroup {
             DemoView()

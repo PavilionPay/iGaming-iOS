@@ -1,6 +1,5 @@
 //
 //  SessionSetupViewController.swift
-//  iGamingKit
 //
 //  Created by Pavilion Payments
 //
@@ -8,7 +7,7 @@
 import UIKit
 import AuthenticationServices
 
-/// Demonstrates how to integrate and use the iGaming SDK.
+/// Demonstrates how to integrate and use the VIP Connect SDK.
 class SessionSetupViewController: UIViewController {
     
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
@@ -26,7 +25,7 @@ class SessionSetupViewController: UIViewController {
     
     @IBAction func launchVipSDK() {
         Task {
-            // Steps to launch an iGaming session:
+            // Steps to launch a VIP Connect session:
             //
             // 1. Acquire a VIP Connect token securely from a backend service
             //      Ref - https://developer.vippreferred.com/integration-steps/operator-requirements

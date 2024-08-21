@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SessionSetupViewController" customModule="iGamingDemo" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SessionSetupViewController" customModule="VipConnectDemo" customModuleProvider="target">
             <connections>
                 <outlet property="activityIndicator" destination="LSO-90-Y1X" id="WoP-bq-CaL"/>
                 <outlet property="launchButton" destination="FO2-FW-5lD" id="K5J-9q-UoZ"/>
@@ -22,16 +22,16 @@
             <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iGaming Demo App" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wpI-Gj-gqj">
-                    <rect key="frame" x="123.00000000000001" y="139" width="147.33333333333337" height="21"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="VIP Connect Reference App" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wpI-Gj-gqj">
+                    <rect key="frame" x="91.000000000000014" y="139" width="211.33333333333337" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FO2-FW-5lD">
-                    <rect key="frame" x="104.33333333333333" y="421" width="184.33333333333337" height="35"/>
+                    <rect key="frame" x="88.333333333333329" y="421" width="216.33333333333337" height="35"/>
                     <state key="normal" title="Button"/>
-                    <buttonConfiguration key="configuration" style="plain" title="Launch iGaming SDK">
+                    <buttonConfiguration key="configuration" style="plain" title="Launch VIP Connect SDK">
                         <backgroundConfiguration key="background">
                             <color key="backgroundColor" name="AccentColor"/>
                         </backgroundConfiguration>

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D11B7B882B07F51A009070FB"
-               BuildableName = "iGamingDemo.app"
-               BlueprintName = "iGamingDemo"
-               ReferencedContainer = "container:iGamingDemo.xcodeproj">
+               BuildableName = "VIPConnectDemo.app"
+               BlueprintName = "VIPConnectDemo"
+               ReferencedContainer = "container:VipConnectDemo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,9 +44,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D11B7B882B07F51A009070FB"
-            BuildableName = "iGamingDemo.app"
-            BlueprintName = "iGamingDemo"
-            ReferencedContainer = "container:iGamingDemo.xcodeproj">
+            BuildableName = "VIPConnectDemo.app"
+            BlueprintName = "VIPConnectDemo"
+            ReferencedContainer = "container:VipConnectDemo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -61,9 +61,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D11B7B882B07F51A009070FB"
-            BuildableName = "iGamingDemo.app"
-            BlueprintName = "iGamingDemo"
-            ReferencedContainer = "container:iGamingDemo.xcodeproj">
+            BuildableName = "VIPConnectDemo.app"
+            BlueprintName = "VIPConnectDemo"
+            ReferencedContainer = "container:VipConnectDemo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
